@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
 )
 
@@ -19,5 +20,7 @@ func (Playlist) Fields() []ent.Field {
 
 // Edges of the Playlist.
 func (Playlist) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("playlist_owner", User.Type).Ref("playlists").Unique(),
+	}
 }
