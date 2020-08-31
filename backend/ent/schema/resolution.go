@@ -1,6 +1,9 @@
 package schema
 
-import "github.com/facebook/ent"
+import (
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/field"
+)
 
 // Resolution holds the schema definition for the Resolution entity.
 type Resolution struct {
@@ -9,7 +12,9 @@ type Resolution struct {
 
 // Fields of the Resolution.
 func (Resolution) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.Int("Resolution_ID"),
+	}
 }
 
 // Edges of the Resolution.
