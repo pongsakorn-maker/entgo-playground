@@ -19,5 +19,5 @@ func (Video) Fields() []ent.Field {
 
 // Edges of the Video.
 func (Video) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{}
 }

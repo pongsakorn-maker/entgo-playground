@@ -19,5 +19,5 @@ func (Resolution) Fields() []ent.Field {
 
 // Edges of the Resolution.
 func (Resolution) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{}
 }

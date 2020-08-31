@@ -19,5 +19,5 @@ func (Playlist) Fields() []ent.Field {
 
 // Edges of the Playlist.
 func (Playlist) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{}
 }
