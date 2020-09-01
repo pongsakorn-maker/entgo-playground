@@ -4,6 +4,7 @@ package playlistvideo
 
 import (
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 )
 
@@ -170,6 +171,90 @@ func PlaylistVideoIDLT(v int) predicate.PlaylistVideo {
 func PlaylistVideoIDLTE(v int) predicate.PlaylistVideo {
 	return predicate.PlaylistVideo(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldPlaylistVideoID), v))
+	})
+}
+
+// HasVideo applies the HasEdge predicate on the "video" edge.
+func HasVideo() predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VideoTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VideoTable, VideoColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVideoWith applies the HasEdge predicate on the "video" edge with a given conditions (other predicates).
+func HasVideoWith(preds ...predicate.Video) predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VideoInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, VideoTable, VideoColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPlaylists applies the HasEdge predicate on the "playlists" edge.
+func HasPlaylists() predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PlaylistsTable, PlaylistsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPlaylistsWith applies the HasEdge predicate on the "playlists" edge with a given conditions (other predicates).
+func HasPlaylistsWith(preds ...predicate.Playlist) predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PlaylistsTable, PlaylistsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasResolution applies the HasEdge predicate on the "resolution" edge.
+func HasResolution() predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResolutionTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ResolutionTable, ResolutionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResolutionWith applies the HasEdge predicate on the "resolution" edge with a given conditions (other predicates).
+func HasResolutionWith(preds ...predicate.Resolution) predicate.PlaylistVideo {
+	return predicate.PlaylistVideo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ResolutionInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ResolutionTable, ResolutionColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

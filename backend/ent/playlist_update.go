@@ -10,6 +10,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 	"github.com/pongsakorn-maker/entgo-playground/ent/user"
 )
@@ -41,23 +42,38 @@ func (pu *PlaylistUpdate) AddPlaylistID(i int) *PlaylistUpdate {
 	return pu
 }
 
-// SetPlaylistOwnerID sets the playlist_owner edge to User by id.
-func (pu *PlaylistUpdate) SetPlaylistOwnerID(id int) *PlaylistUpdate {
-	pu.mutation.SetPlaylistOwnerID(id)
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (pu *PlaylistUpdate) AddPlaylistVideoIDs(ids ...int) *PlaylistUpdate {
+	pu.mutation.AddPlaylistVideoIDs(ids...)
 	return pu
 }
 
-// SetNillablePlaylistOwnerID sets the playlist_owner edge to User by id if the given value is not nil.
-func (pu *PlaylistUpdate) SetNillablePlaylistOwnerID(id *int) *PlaylistUpdate {
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (pu *PlaylistUpdate) AddPlaylistVideos(p ...*PlaylistVideo) *PlaylistUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pu.AddPlaylistVideoIDs(ids...)
+}
+
+// SetOwnerID sets the owner edge to User by id.
+func (pu *PlaylistUpdate) SetOwnerID(id int) *PlaylistUpdate {
+	pu.mutation.SetOwnerID(id)
+	return pu
+}
+
+// SetNillableOwnerID sets the owner edge to User by id if the given value is not nil.
+func (pu *PlaylistUpdate) SetNillableOwnerID(id *int) *PlaylistUpdate {
 	if id != nil {
-		pu = pu.SetPlaylistOwnerID(*id)
+		pu = pu.SetOwnerID(*id)
 	}
 	return pu
 }
 
-// SetPlaylistOwner sets the playlist_owner edge to User.
-func (pu *PlaylistUpdate) SetPlaylistOwner(u *User) *PlaylistUpdate {
-	return pu.SetPlaylistOwnerID(u.ID)
+// SetOwner sets the owner edge to User.
+func (pu *PlaylistUpdate) SetOwner(u *User) *PlaylistUpdate {
+	return pu.SetOwnerID(u.ID)
 }
 
 // Mutation returns the PlaylistMutation object of the builder.
@@ -65,9 +81,24 @@ func (pu *PlaylistUpdate) Mutation() *PlaylistMutation {
 	return pu.mutation
 }
 
-// ClearPlaylistOwner clears the playlist_owner edge to User.
-func (pu *PlaylistUpdate) ClearPlaylistOwner() *PlaylistUpdate {
-	pu.mutation.ClearPlaylistOwner()
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (pu *PlaylistUpdate) RemovePlaylistVideoIDs(ids ...int) *PlaylistUpdate {
+	pu.mutation.RemovePlaylistVideoIDs(ids...)
+	return pu
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (pu *PlaylistUpdate) RemovePlaylistVideos(p ...*PlaylistVideo) *PlaylistUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pu.RemovePlaylistVideoIDs(ids...)
+}
+
+// ClearOwner clears the owner edge to User.
+func (pu *PlaylistUpdate) ClearOwner() *PlaylistUpdate {
+	pu.mutation.ClearOwner()
 	return pu
 }
 
@@ -155,12 +186,50 @@ func (pu *PlaylistUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: playlist.FieldPlaylistID,
 		})
 	}
-	if pu.mutation.PlaylistOwnerCleared() {
+	if nodes := pu.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   playlist.PlaylistVideosTable,
+			Columns: []string{playlist.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   playlist.PlaylistVideosTable,
+			Columns: []string{playlist.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   playlist.PlaylistOwnerTable,
-			Columns: []string{playlist.PlaylistOwnerColumn},
+			Table:   playlist.OwnerTable,
+			Columns: []string{playlist.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -171,12 +240,12 @@ func (pu *PlaylistUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.PlaylistOwnerIDs(); len(nodes) > 0 {
+	if nodes := pu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   playlist.PlaylistOwnerTable,
-			Columns: []string{playlist.PlaylistOwnerColumn},
+			Table:   playlist.OwnerTable,
+			Columns: []string{playlist.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -221,23 +290,38 @@ func (puo *PlaylistUpdateOne) AddPlaylistID(i int) *PlaylistUpdateOne {
 	return puo
 }
 
-// SetPlaylistOwnerID sets the playlist_owner edge to User by id.
-func (puo *PlaylistUpdateOne) SetPlaylistOwnerID(id int) *PlaylistUpdateOne {
-	puo.mutation.SetPlaylistOwnerID(id)
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (puo *PlaylistUpdateOne) AddPlaylistVideoIDs(ids ...int) *PlaylistUpdateOne {
+	puo.mutation.AddPlaylistVideoIDs(ids...)
 	return puo
 }
 
-// SetNillablePlaylistOwnerID sets the playlist_owner edge to User by id if the given value is not nil.
-func (puo *PlaylistUpdateOne) SetNillablePlaylistOwnerID(id *int) *PlaylistUpdateOne {
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (puo *PlaylistUpdateOne) AddPlaylistVideos(p ...*PlaylistVideo) *PlaylistUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return puo.AddPlaylistVideoIDs(ids...)
+}
+
+// SetOwnerID sets the owner edge to User by id.
+func (puo *PlaylistUpdateOne) SetOwnerID(id int) *PlaylistUpdateOne {
+	puo.mutation.SetOwnerID(id)
+	return puo
+}
+
+// SetNillableOwnerID sets the owner edge to User by id if the given value is not nil.
+func (puo *PlaylistUpdateOne) SetNillableOwnerID(id *int) *PlaylistUpdateOne {
 	if id != nil {
-		puo = puo.SetPlaylistOwnerID(*id)
+		puo = puo.SetOwnerID(*id)
 	}
 	return puo
 }
 
-// SetPlaylistOwner sets the playlist_owner edge to User.
-func (puo *PlaylistUpdateOne) SetPlaylistOwner(u *User) *PlaylistUpdateOne {
-	return puo.SetPlaylistOwnerID(u.ID)
+// SetOwner sets the owner edge to User.
+func (puo *PlaylistUpdateOne) SetOwner(u *User) *PlaylistUpdateOne {
+	return puo.SetOwnerID(u.ID)
 }
 
 // Mutation returns the PlaylistMutation object of the builder.
@@ -245,9 +329,24 @@ func (puo *PlaylistUpdateOne) Mutation() *PlaylistMutation {
 	return puo.mutation
 }
 
-// ClearPlaylistOwner clears the playlist_owner edge to User.
-func (puo *PlaylistUpdateOne) ClearPlaylistOwner() *PlaylistUpdateOne {
-	puo.mutation.ClearPlaylistOwner()
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (puo *PlaylistUpdateOne) RemovePlaylistVideoIDs(ids ...int) *PlaylistUpdateOne {
+	puo.mutation.RemovePlaylistVideoIDs(ids...)
+	return puo
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (puo *PlaylistUpdateOne) RemovePlaylistVideos(p ...*PlaylistVideo) *PlaylistUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return puo.RemovePlaylistVideoIDs(ids...)
+}
+
+// ClearOwner clears the owner edge to User.
+func (puo *PlaylistUpdateOne) ClearOwner() *PlaylistUpdateOne {
+	puo.mutation.ClearOwner()
 	return puo
 }
 
@@ -333,12 +432,50 @@ func (puo *PlaylistUpdateOne) sqlSave(ctx context.Context) (pl *Playlist, err er
 			Column: playlist.FieldPlaylistID,
 		})
 	}
-	if puo.mutation.PlaylistOwnerCleared() {
+	if nodes := puo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   playlist.PlaylistVideosTable,
+			Columns: []string{playlist.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   playlist.PlaylistVideosTable,
+			Columns: []string{playlist.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   playlist.PlaylistOwnerTable,
-			Columns: []string{playlist.PlaylistOwnerColumn},
+			Table:   playlist.OwnerTable,
+			Columns: []string{playlist.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -349,12 +486,12 @@ func (puo *PlaylistUpdateOne) sqlSave(ctx context.Context) (pl *Playlist, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.PlaylistOwnerIDs(); len(nodes) > 0 {
+	if nodes := puo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   playlist.PlaylistOwnerTable,
-			Columns: []string{playlist.PlaylistOwnerColumn},
+			Table:   playlist.OwnerTable,
+			Columns: []string{playlist.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

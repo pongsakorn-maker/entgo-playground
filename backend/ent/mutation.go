@@ -36,16 +36,18 @@ const (
 // nodes in the graph.
 type PlaylistMutation struct {
 	config
-	op                    Op
-	typ                   string
-	id                    *int
-	_Playlist_ID          *int
-	add_Playlist_ID       *int
-	clearedFields         map[string]struct{}
-	playlist_owner        *int
-	clearedplaylist_owner bool
-	done                  bool
-	oldValue              func(context.Context) (*Playlist, error)
+	op                     Op
+	typ                    string
+	id                     *int
+	_Playlist_ID           *int
+	add_Playlist_ID        *int
+	clearedFields          map[string]struct{}
+	playlist_videos        map[int]struct{}
+	removedplaylist_videos map[int]struct{}
+	owner                  *int
+	clearedowner           bool
+	done                   bool
+	oldValue               func(context.Context) (*Playlist, error)
 }
 
 var _ ent.Mutation = (*PlaylistMutation)(nil)
@@ -184,43 +186,85 @@ func (m *PlaylistMutation) ResetPlaylistID() {
 	m.add_Playlist_ID = nil
 }
 
-// SetPlaylistOwnerID sets the playlist_owner edge to User by id.
-func (m *PlaylistMutation) SetPlaylistOwnerID(id int) {
-	m.playlist_owner = &id
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (m *PlaylistMutation) AddPlaylistVideoIDs(ids ...int) {
+	if m.playlist_videos == nil {
+		m.playlist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.playlist_videos[ids[i]] = struct{}{}
+	}
 }
 
-// ClearPlaylistOwner clears the playlist_owner edge to User.
-func (m *PlaylistMutation) ClearPlaylistOwner() {
-	m.clearedplaylist_owner = true
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (m *PlaylistMutation) RemovePlaylistVideoIDs(ids ...int) {
+	if m.removedplaylist_videos == nil {
+		m.removedplaylist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedplaylist_videos[ids[i]] = struct{}{}
+	}
 }
 
-// PlaylistOwnerCleared returns if the edge playlist_owner was cleared.
-func (m *PlaylistMutation) PlaylistOwnerCleared() bool {
-	return m.clearedplaylist_owner
-}
-
-// PlaylistOwnerID returns the playlist_owner id in the mutation.
-func (m *PlaylistMutation) PlaylistOwnerID() (id int, exists bool) {
-	if m.playlist_owner != nil {
-		return *m.playlist_owner, true
+// RemovedPlaylistVideos returns the removed ids of playlist_videos.
+func (m *PlaylistMutation) RemovedPlaylistVideosIDs() (ids []int) {
+	for id := range m.removedplaylist_videos {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// PlaylistOwnerIDs returns the playlist_owner ids in the mutation.
+// PlaylistVideosIDs returns the playlist_videos ids in the mutation.
+func (m *PlaylistMutation) PlaylistVideosIDs() (ids []int) {
+	for id := range m.playlist_videos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPlaylistVideos reset all changes of the "playlist_videos" edge.
+func (m *PlaylistMutation) ResetPlaylistVideos() {
+	m.playlist_videos = nil
+	m.removedplaylist_videos = nil
+}
+
+// SetOwnerID sets the owner edge to User by id.
+func (m *PlaylistMutation) SetOwnerID(id int) {
+	m.owner = &id
+}
+
+// ClearOwner clears the owner edge to User.
+func (m *PlaylistMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared returns if the edge owner was cleared.
+func (m *PlaylistMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the owner id in the mutation.
+func (m *PlaylistMutation) OwnerID() (id int, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the owner ids in the mutation.
 // Note that ids always returns len(ids) <= 1 for unique edges, and you should use
-// PlaylistOwnerID instead. It exists only for internal usage by the builders.
-func (m *PlaylistMutation) PlaylistOwnerIDs() (ids []int) {
-	if id := m.playlist_owner; id != nil {
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *PlaylistMutation) OwnerIDs() (ids []int) {
+	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetPlaylistOwner reset all changes of the "playlist_owner" edge.
-func (m *PlaylistMutation) ResetPlaylistOwner() {
-	m.playlist_owner = nil
-	m.clearedplaylist_owner = false
+// ResetOwner reset all changes of the "owner" edge.
+func (m *PlaylistMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
 }
 
 // Op returns the operation name.
@@ -353,9 +397,12 @@ func (m *PlaylistMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PlaylistMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.playlist_owner != nil {
-		edges = append(edges, playlist.EdgePlaylistOwner)
+	edges := make([]string, 0, 2)
+	if m.playlist_videos != nil {
+		edges = append(edges, playlist.EdgePlaylistVideos)
+	}
+	if m.owner != nil {
+		edges = append(edges, playlist.EdgeOwner)
 	}
 	return edges
 }
@@ -364,8 +411,14 @@ func (m *PlaylistMutation) AddedEdges() []string {
 // the given edge name.
 func (m *PlaylistMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case playlist.EdgePlaylistOwner:
-		if id := m.playlist_owner; id != nil {
+	case playlist.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.playlist_videos))
+		for id := range m.playlist_videos {
+			ids = append(ids, id)
+		}
+		return ids
+	case playlist.EdgeOwner:
+		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -375,7 +428,10 @@ func (m *PlaylistMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PlaylistMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedplaylist_videos != nil {
+		edges = append(edges, playlist.EdgePlaylistVideos)
+	}
 	return edges
 }
 
@@ -383,6 +439,12 @@ func (m *PlaylistMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *PlaylistMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case playlist.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.removedplaylist_videos))
+		for id := range m.removedplaylist_videos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -390,9 +452,9 @@ func (m *PlaylistMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PlaylistMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedplaylist_owner {
-		edges = append(edges, playlist.EdgePlaylistOwner)
+	edges := make([]string, 0, 2)
+	if m.clearedowner {
+		edges = append(edges, playlist.EdgeOwner)
 	}
 	return edges
 }
@@ -401,8 +463,8 @@ func (m *PlaylistMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *PlaylistMutation) EdgeCleared(name string) bool {
 	switch name {
-	case playlist.EdgePlaylistOwner:
-		return m.clearedplaylist_owner
+	case playlist.EdgeOwner:
+		return m.clearedowner
 	}
 	return false
 }
@@ -411,8 +473,8 @@ func (m *PlaylistMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *PlaylistMutation) ClearEdge(name string) error {
 	switch name {
-	case playlist.EdgePlaylistOwner:
-		m.ClearPlaylistOwner()
+	case playlist.EdgeOwner:
+		m.ClearOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown Playlist unique edge %s", name)
@@ -423,8 +485,11 @@ func (m *PlaylistMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *PlaylistMutation) ResetEdge(name string) error {
 	switch name {
-	case playlist.EdgePlaylistOwner:
-		m.ResetPlaylistOwner()
+	case playlist.EdgePlaylistVideos:
+		m.ResetPlaylistVideos()
+		return nil
+	case playlist.EdgeOwner:
+		m.ResetOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown Playlist edge %s", name)
@@ -440,6 +505,12 @@ type PlaylistVideoMutation struct {
 	_PlaylistVideo_ID    *int
 	add_PlaylistVideo_ID *int
 	clearedFields        map[string]struct{}
+	video                *int
+	clearedvideo         bool
+	playlists            *int
+	clearedplaylists     bool
+	resolution           *int
+	clearedresolution    bool
 	done                 bool
 	oldValue             func(context.Context) (*PlaylistVideo, error)
 }
@@ -580,6 +651,123 @@ func (m *PlaylistVideoMutation) ResetPlaylistVideoID() {
 	m.add_PlaylistVideo_ID = nil
 }
 
+// SetVideoID sets the video edge to Video by id.
+func (m *PlaylistVideoMutation) SetVideoID(id int) {
+	m.video = &id
+}
+
+// ClearVideo clears the video edge to Video.
+func (m *PlaylistVideoMutation) ClearVideo() {
+	m.clearedvideo = true
+}
+
+// VideoCleared returns if the edge video was cleared.
+func (m *PlaylistVideoMutation) VideoCleared() bool {
+	return m.clearedvideo
+}
+
+// VideoID returns the video id in the mutation.
+func (m *PlaylistVideoMutation) VideoID() (id int, exists bool) {
+	if m.video != nil {
+		return *m.video, true
+	}
+	return
+}
+
+// VideoIDs returns the video ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// VideoID instead. It exists only for internal usage by the builders.
+func (m *PlaylistVideoMutation) VideoIDs() (ids []int) {
+	if id := m.video; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetVideo reset all changes of the "video" edge.
+func (m *PlaylistVideoMutation) ResetVideo() {
+	m.video = nil
+	m.clearedvideo = false
+}
+
+// SetPlaylistsID sets the playlists edge to Playlist by id.
+func (m *PlaylistVideoMutation) SetPlaylistsID(id int) {
+	m.playlists = &id
+}
+
+// ClearPlaylists clears the playlists edge to Playlist.
+func (m *PlaylistVideoMutation) ClearPlaylists() {
+	m.clearedplaylists = true
+}
+
+// PlaylistsCleared returns if the edge playlists was cleared.
+func (m *PlaylistVideoMutation) PlaylistsCleared() bool {
+	return m.clearedplaylists
+}
+
+// PlaylistsID returns the playlists id in the mutation.
+func (m *PlaylistVideoMutation) PlaylistsID() (id int, exists bool) {
+	if m.playlists != nil {
+		return *m.playlists, true
+	}
+	return
+}
+
+// PlaylistsIDs returns the playlists ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// PlaylistsID instead. It exists only for internal usage by the builders.
+func (m *PlaylistVideoMutation) PlaylistsIDs() (ids []int) {
+	if id := m.playlists; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPlaylists reset all changes of the "playlists" edge.
+func (m *PlaylistVideoMutation) ResetPlaylists() {
+	m.playlists = nil
+	m.clearedplaylists = false
+}
+
+// SetResolutionID sets the resolution edge to Resolution by id.
+func (m *PlaylistVideoMutation) SetResolutionID(id int) {
+	m.resolution = &id
+}
+
+// ClearResolution clears the resolution edge to Resolution.
+func (m *PlaylistVideoMutation) ClearResolution() {
+	m.clearedresolution = true
+}
+
+// ResolutionCleared returns if the edge resolution was cleared.
+func (m *PlaylistVideoMutation) ResolutionCleared() bool {
+	return m.clearedresolution
+}
+
+// ResolutionID returns the resolution id in the mutation.
+func (m *PlaylistVideoMutation) ResolutionID() (id int, exists bool) {
+	if m.resolution != nil {
+		return *m.resolution, true
+	}
+	return
+}
+
+// ResolutionIDs returns the resolution ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ResolutionID instead. It exists only for internal usage by the builders.
+func (m *PlaylistVideoMutation) ResolutionIDs() (ids []int) {
+	if id := m.resolution; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetResolution reset all changes of the "resolution" edge.
+func (m *PlaylistVideoMutation) ResetResolution() {
+	m.resolution = nil
+	m.clearedresolution = false
+}
+
 // Op returns the operation name.
 func (m *PlaylistVideoMutation) Op() Op {
 	return m.op
@@ -710,45 +898,98 @@ func (m *PlaylistVideoMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PlaylistVideoMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.video != nil {
+		edges = append(edges, playlistvideo.EdgeVideo)
+	}
+	if m.playlists != nil {
+		edges = append(edges, playlistvideo.EdgePlaylists)
+	}
+	if m.resolution != nil {
+		edges = append(edges, playlistvideo.EdgeResolution)
+	}
 	return edges
 }
 
 // AddedIDs returns all ids (to other nodes) that were added for
 // the given edge name.
 func (m *PlaylistVideoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case playlistvideo.EdgeVideo:
+		if id := m.video; id != nil {
+			return []ent.Value{*id}
+		}
+	case playlistvideo.EdgePlaylists:
+		if id := m.playlists; id != nil {
+			return []ent.Value{*id}
+		}
+	case playlistvideo.EdgeResolution:
+		if id := m.resolution; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PlaylistVideoMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
 // RemovedIDs returns all ids (to other nodes) that were removed for
 // the given edge name.
 func (m *PlaylistVideoMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PlaylistVideoMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 3)
+	if m.clearedvideo {
+		edges = append(edges, playlistvideo.EdgeVideo)
+	}
+	if m.clearedplaylists {
+		edges = append(edges, playlistvideo.EdgePlaylists)
+	}
+	if m.clearedresolution {
+		edges = append(edges, playlistvideo.EdgeResolution)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean indicates if this edge was
 // cleared in this mutation.
 func (m *PlaylistVideoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case playlistvideo.EdgeVideo:
+		return m.clearedvideo
+	case playlistvideo.EdgePlaylists:
+		return m.clearedplaylists
+	case playlistvideo.EdgeResolution:
+		return m.clearedresolution
+	}
 	return false
 }
 
 // ClearEdge clears the value for the given name. It returns an
 // error if the edge name is not defined in the schema.
 func (m *PlaylistVideoMutation) ClearEdge(name string) error {
+	switch name {
+	case playlistvideo.EdgeVideo:
+		m.ClearVideo()
+		return nil
+	case playlistvideo.EdgePlaylists:
+		m.ClearPlaylists()
+		return nil
+	case playlistvideo.EdgeResolution:
+		m.ClearResolution()
+		return nil
+	}
 	return fmt.Errorf("unknown PlaylistVideo unique edge %s", name)
 }
 
@@ -756,6 +997,17 @@ func (m *PlaylistVideoMutation) ClearEdge(name string) error {
 // given edge name. It returns an error if the edge is not
 // defined in the schema.
 func (m *PlaylistVideoMutation) ResetEdge(name string) error {
+	switch name {
+	case playlistvideo.EdgeVideo:
+		m.ResetVideo()
+		return nil
+	case playlistvideo.EdgePlaylists:
+		m.ResetPlaylists()
+		return nil
+	case playlistvideo.EdgeResolution:
+		m.ResetResolution()
+		return nil
+	}
 	return fmt.Errorf("unknown PlaylistVideo edge %s", name)
 }
 
@@ -763,14 +1015,16 @@ func (m *PlaylistVideoMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ResolutionMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	_Resolution_ID    *int
-	add_Resolution_ID *int
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*Resolution, error)
+	op                     Op
+	typ                    string
+	id                     *int
+	_Resolution_ID         *int
+	add_Resolution_ID      *int
+	clearedFields          map[string]struct{}
+	playlist_videos        map[int]struct{}
+	removedplaylist_videos map[int]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*Resolution, error)
 }
 
 var _ ent.Mutation = (*ResolutionMutation)(nil)
@@ -909,6 +1163,48 @@ func (m *ResolutionMutation) ResetResolutionID() {
 	m.add_Resolution_ID = nil
 }
 
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (m *ResolutionMutation) AddPlaylistVideoIDs(ids ...int) {
+	if m.playlist_videos == nil {
+		m.playlist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.playlist_videos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (m *ResolutionMutation) RemovePlaylistVideoIDs(ids ...int) {
+	if m.removedplaylist_videos == nil {
+		m.removedplaylist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedplaylist_videos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPlaylistVideos returns the removed ids of playlist_videos.
+func (m *ResolutionMutation) RemovedPlaylistVideosIDs() (ids []int) {
+	for id := range m.removedplaylist_videos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PlaylistVideosIDs returns the playlist_videos ids in the mutation.
+func (m *ResolutionMutation) PlaylistVideosIDs() (ids []int) {
+	for id := range m.playlist_videos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPlaylistVideos reset all changes of the "playlist_videos" edge.
+func (m *ResolutionMutation) ResetPlaylistVideos() {
+	m.playlist_videos = nil
+	m.removedplaylist_videos = nil
+}
+
 // Op returns the operation name.
 func (m *ResolutionMutation) Op() Op {
 	return m.op
@@ -1039,45 +1335,71 @@ func (m *ResolutionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ResolutionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.playlist_videos != nil {
+		edges = append(edges, resolution.EdgePlaylistVideos)
+	}
 	return edges
 }
 
 // AddedIDs returns all ids (to other nodes) that were added for
 // the given edge name.
 func (m *ResolutionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case resolution.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.playlist_videos))
+		for id := range m.playlist_videos {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ResolutionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedplaylist_videos != nil {
+		edges = append(edges, resolution.EdgePlaylistVideos)
+	}
 	return edges
 }
 
 // RemovedIDs returns all ids (to other nodes) that were removed for
 // the given edge name.
 func (m *ResolutionMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case resolution.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.removedplaylist_videos))
+		for id := range m.removedplaylist_videos {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ResolutionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
 // EdgeCleared returns a boolean indicates if this edge was
 // cleared in this mutation.
 func (m *ResolutionMutation) EdgeCleared(name string) bool {
+	switch name {
+	}
 	return false
 }
 
 // ClearEdge clears the value for the given name. It returns an
 // error if the edge name is not defined in the schema.
 func (m *ResolutionMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Resolution unique edge %s", name)
 }
 
@@ -1085,6 +1407,11 @@ func (m *ResolutionMutation) ClearEdge(name string) error {
 // given edge name. It returns an error if the edge is not
 // defined in the schema.
 func (m *ResolutionMutation) ResetEdge(name string) error {
+	switch name {
+	case resolution.EdgePlaylistVideos:
+		m.ResetPlaylistVideos()
+		return nil
+	}
 	return fmt.Errorf("unknown Resolution edge %s", name)
 }
 
@@ -1561,16 +1888,18 @@ func (m *UserMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type VideoMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	_Video_ID     *int
-	add_Video_ID  *int
-	clearedFields map[string]struct{}
-	owner         *int
-	clearedowner  bool
-	done          bool
-	oldValue      func(context.Context) (*Video, error)
+	op                     Op
+	typ                    string
+	id                     *int
+	_Video_ID              *int
+	add_Video_ID           *int
+	clearedFields          map[string]struct{}
+	playlist_videos        map[int]struct{}
+	removedplaylist_videos map[int]struct{}
+	owner                  *int
+	clearedowner           bool
+	done                   bool
+	oldValue               func(context.Context) (*Video, error)
 }
 
 var _ ent.Mutation = (*VideoMutation)(nil)
@@ -1707,6 +2036,48 @@ func (m *VideoMutation) AddedVideoID() (r int, exists bool) {
 func (m *VideoMutation) ResetVideoID() {
 	m._Video_ID = nil
 	m.add_Video_ID = nil
+}
+
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (m *VideoMutation) AddPlaylistVideoIDs(ids ...int) {
+	if m.playlist_videos == nil {
+		m.playlist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.playlist_videos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (m *VideoMutation) RemovePlaylistVideoIDs(ids ...int) {
+	if m.removedplaylist_videos == nil {
+		m.removedplaylist_videos = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedplaylist_videos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPlaylistVideos returns the removed ids of playlist_videos.
+func (m *VideoMutation) RemovedPlaylistVideosIDs() (ids []int) {
+	for id := range m.removedplaylist_videos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PlaylistVideosIDs returns the playlist_videos ids in the mutation.
+func (m *VideoMutation) PlaylistVideosIDs() (ids []int) {
+	for id := range m.playlist_videos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPlaylistVideos reset all changes of the "playlist_videos" edge.
+func (m *VideoMutation) ResetPlaylistVideos() {
+	m.playlist_videos = nil
+	m.removedplaylist_videos = nil
 }
 
 // SetOwnerID sets the owner edge to User by id.
@@ -1878,7 +2249,10 @@ func (m *VideoMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *VideoMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.playlist_videos != nil {
+		edges = append(edges, video.EdgePlaylistVideos)
+	}
 	if m.owner != nil {
 		edges = append(edges, video.EdgeOwner)
 	}
@@ -1889,6 +2263,12 @@ func (m *VideoMutation) AddedEdges() []string {
 // the given edge name.
 func (m *VideoMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case video.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.playlist_videos))
+		for id := range m.playlist_videos {
+			ids = append(ids, id)
+		}
+		return ids
 	case video.EdgeOwner:
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
@@ -1900,7 +2280,10 @@ func (m *VideoMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *VideoMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedplaylist_videos != nil {
+		edges = append(edges, video.EdgePlaylistVideos)
+	}
 	return edges
 }
 
@@ -1908,6 +2291,12 @@ func (m *VideoMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *VideoMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case video.EdgePlaylistVideos:
+		ids := make([]ent.Value, 0, len(m.removedplaylist_videos))
+		for id := range m.removedplaylist_videos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -1915,7 +2304,7 @@ func (m *VideoMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *VideoMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedowner {
 		edges = append(edges, video.EdgeOwner)
 	}
@@ -1948,6 +2337,9 @@ func (m *VideoMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *VideoMutation) ResetEdge(name string) error {
 	switch name {
+	case video.EdgePlaylistVideos:
+		m.ResetPlaylistVideos()
+		return nil
 	case video.EdgeOwner:
 		m.ResetOwner()
 		return nil

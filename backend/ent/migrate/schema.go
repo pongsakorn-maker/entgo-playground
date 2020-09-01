@@ -33,13 +33,38 @@ var (
 	PlaylistVideosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "playlist_video_id", Type: field.TypeInt},
+		{Name: "playlist_playlist_videos", Type: field.TypeInt, Nullable: true},
+		{Name: "resolution_playlist_videos", Type: field.TypeInt, Nullable: true},
+		{Name: "video_playlist_videos", Type: field.TypeInt, Nullable: true},
 	}
 	// PlaylistVideosTable holds the schema information for the "playlist_videos" table.
 	PlaylistVideosTable = &schema.Table{
-		Name:        "playlist_videos",
-		Columns:     PlaylistVideosColumns,
-		PrimaryKey:  []*schema.Column{PlaylistVideosColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
+		Name:       "playlist_videos",
+		Columns:    PlaylistVideosColumns,
+		PrimaryKey: []*schema.Column{PlaylistVideosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "playlist_videos_playlists_playlist_videos",
+				Columns: []*schema.Column{PlaylistVideosColumns[2]},
+
+				RefColumns: []*schema.Column{PlaylistsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "playlist_videos_resolutions_playlist_videos",
+				Columns: []*schema.Column{PlaylistVideosColumns[3]},
+
+				RefColumns: []*schema.Column{ResolutionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "playlist_videos_videos_playlist_videos",
+				Columns: []*schema.Column{PlaylistVideosColumns[4]},
+
+				RefColumns: []*schema.Column{VideosColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ResolutionsColumns holds the columns for the "resolutions" table.
 	ResolutionsColumns = []*schema.Column{
@@ -98,5 +123,8 @@ var (
 
 func init() {
 	PlaylistsTable.ForeignKeys[0].RefTable = UsersTable
+	PlaylistVideosTable.ForeignKeys[0].RefTable = PlaylistsTable
+	PlaylistVideosTable.ForeignKeys[1].RefTable = ResolutionsTable
+	PlaylistVideosTable.ForeignKeys[2].RefTable = VideosTable
 	VideosTable.ForeignKeys[0].RefTable = UsersTable
 }

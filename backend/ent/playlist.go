@@ -26,25 +26,36 @@ type Playlist struct {
 
 // PlaylistEdges holds the relations/edges for other nodes in the graph.
 type PlaylistEdges struct {
-	// PlaylistOwner holds the value of the playlist_owner edge.
-	PlaylistOwner *User
+	// PlaylistVideos holds the value of the playlist_videos edge.
+	PlaylistVideos []*PlaylistVideo
+	// Owner holds the value of the owner edge.
+	Owner *User
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
-// PlaylistOwnerOrErr returns the PlaylistOwner value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PlaylistEdges) PlaylistOwnerOrErr() (*User, error) {
+// PlaylistVideosOrErr returns the PlaylistVideos value or an error if the edge
+// was not loaded in eager-loading.
+func (e PlaylistEdges) PlaylistVideosOrErr() ([]*PlaylistVideo, error) {
 	if e.loadedTypes[0] {
-		if e.PlaylistOwner == nil {
-			// The edge playlist_owner was loaded in eager-loading,
+		return e.PlaylistVideos, nil
+	}
+	return nil, &NotLoadedError{edge: "playlist_videos"}
+}
+
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PlaylistEdges) OwnerOrErr() (*User, error) {
+	if e.loadedTypes[1] {
+		if e.Owner == nil {
+			// The edge owner was loaded in eager-loading,
 			// but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.PlaylistOwner, nil
+		return e.Owner, nil
 	}
-	return nil, &NotLoadedError{edge: "playlist_owner"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -91,9 +102,14 @@ func (pl *Playlist) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryPlaylistOwner queries the playlist_owner edge of the Playlist.
-func (pl *Playlist) QueryPlaylistOwner() *UserQuery {
-	return (&PlaylistClient{config: pl.config}).QueryPlaylistOwner(pl)
+// QueryPlaylistVideos queries the playlist_videos edge of the Playlist.
+func (pl *Playlist) QueryPlaylistVideos() *PlaylistVideoQuery {
+	return (&PlaylistClient{config: pl.config}).QueryPlaylistVideos(pl)
+}
+
+// QueryOwner queries the owner edge of the Playlist.
+func (pl *Playlist) QueryOwner() *UserQuery {
+	return (&PlaylistClient{config: pl.config}).QueryOwner(pl)
 }
 
 // Update returns a builder for updating this Playlist.

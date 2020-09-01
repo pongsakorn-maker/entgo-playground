@@ -9,7 +9,10 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
+	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
+	"github.com/pongsakorn-maker/entgo-playground/ent/video"
 )
 
 // PlaylistVideoCreate is the builder for creating a PlaylistVideo entity.
@@ -23,6 +26,63 @@ type PlaylistVideoCreate struct {
 func (pvc *PlaylistVideoCreate) SetPlaylistVideoID(i int) *PlaylistVideoCreate {
 	pvc.mutation.SetPlaylistVideoID(i)
 	return pvc
+}
+
+// SetVideoID sets the video edge to Video by id.
+func (pvc *PlaylistVideoCreate) SetVideoID(id int) *PlaylistVideoCreate {
+	pvc.mutation.SetVideoID(id)
+	return pvc
+}
+
+// SetNillableVideoID sets the video edge to Video by id if the given value is not nil.
+func (pvc *PlaylistVideoCreate) SetNillableVideoID(id *int) *PlaylistVideoCreate {
+	if id != nil {
+		pvc = pvc.SetVideoID(*id)
+	}
+	return pvc
+}
+
+// SetVideo sets the video edge to Video.
+func (pvc *PlaylistVideoCreate) SetVideo(v *Video) *PlaylistVideoCreate {
+	return pvc.SetVideoID(v.ID)
+}
+
+// SetPlaylistsID sets the playlists edge to Playlist by id.
+func (pvc *PlaylistVideoCreate) SetPlaylistsID(id int) *PlaylistVideoCreate {
+	pvc.mutation.SetPlaylistsID(id)
+	return pvc
+}
+
+// SetNillablePlaylistsID sets the playlists edge to Playlist by id if the given value is not nil.
+func (pvc *PlaylistVideoCreate) SetNillablePlaylistsID(id *int) *PlaylistVideoCreate {
+	if id != nil {
+		pvc = pvc.SetPlaylistsID(*id)
+	}
+	return pvc
+}
+
+// SetPlaylists sets the playlists edge to Playlist.
+func (pvc *PlaylistVideoCreate) SetPlaylists(p *Playlist) *PlaylistVideoCreate {
+	return pvc.SetPlaylistsID(p.ID)
+}
+
+// SetResolutionID sets the resolution edge to Resolution by id.
+func (pvc *PlaylistVideoCreate) SetResolutionID(id int) *PlaylistVideoCreate {
+	pvc.mutation.SetResolutionID(id)
+	return pvc
+}
+
+// SetNillableResolutionID sets the resolution edge to Resolution by id if the given value is not nil.
+func (pvc *PlaylistVideoCreate) SetNillableResolutionID(id *int) *PlaylistVideoCreate {
+	if id != nil {
+		pvc = pvc.SetResolutionID(*id)
+	}
+	return pvc
+}
+
+// SetResolution sets the resolution edge to Resolution.
+func (pvc *PlaylistVideoCreate) SetResolution(r *Resolution) *PlaylistVideoCreate {
+	return pvc.SetResolutionID(r.ID)
 }
 
 // Mutation returns the PlaylistVideoMutation object of the builder.
@@ -109,6 +169,63 @@ func (pvc *PlaylistVideoCreate) createSpec() (*PlaylistVideo, *sqlgraph.CreateSp
 			Column: playlistvideo.FieldPlaylistVideoID,
 		})
 		pv.PlaylistVideoID = value
+	}
+	if nodes := pvc.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.VideoTable,
+			Columns: []string{playlistvideo.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pvc.mutation.PlaylistsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.PlaylistsTable,
+			Columns: []string{playlistvideo.PlaylistsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlist.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pvc.mutation.ResolutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.ResolutionTable,
+			Columns: []string{playlistvideo.ResolutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resolution.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return pv, _spec
 }

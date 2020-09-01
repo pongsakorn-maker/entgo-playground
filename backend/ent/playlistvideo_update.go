@@ -9,8 +9,11 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
+	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
+	"github.com/pongsakorn-maker/entgo-playground/ent/video"
 )
 
 // PlaylistVideoUpdate is the builder for updating PlaylistVideo entities.
@@ -40,13 +43,89 @@ func (pvu *PlaylistVideoUpdate) AddPlaylistVideoID(i int) *PlaylistVideoUpdate {
 	return pvu
 }
 
+// SetVideoID sets the video edge to Video by id.
+func (pvu *PlaylistVideoUpdate) SetVideoID(id int) *PlaylistVideoUpdate {
+	pvu.mutation.SetVideoID(id)
+	return pvu
+}
+
+// SetNillableVideoID sets the video edge to Video by id if the given value is not nil.
+func (pvu *PlaylistVideoUpdate) SetNillableVideoID(id *int) *PlaylistVideoUpdate {
+	if id != nil {
+		pvu = pvu.SetVideoID(*id)
+	}
+	return pvu
+}
+
+// SetVideo sets the video edge to Video.
+func (pvu *PlaylistVideoUpdate) SetVideo(v *Video) *PlaylistVideoUpdate {
+	return pvu.SetVideoID(v.ID)
+}
+
+// SetPlaylistsID sets the playlists edge to Playlist by id.
+func (pvu *PlaylistVideoUpdate) SetPlaylistsID(id int) *PlaylistVideoUpdate {
+	pvu.mutation.SetPlaylistsID(id)
+	return pvu
+}
+
+// SetNillablePlaylistsID sets the playlists edge to Playlist by id if the given value is not nil.
+func (pvu *PlaylistVideoUpdate) SetNillablePlaylistsID(id *int) *PlaylistVideoUpdate {
+	if id != nil {
+		pvu = pvu.SetPlaylistsID(*id)
+	}
+	return pvu
+}
+
+// SetPlaylists sets the playlists edge to Playlist.
+func (pvu *PlaylistVideoUpdate) SetPlaylists(p *Playlist) *PlaylistVideoUpdate {
+	return pvu.SetPlaylistsID(p.ID)
+}
+
+// SetResolutionID sets the resolution edge to Resolution by id.
+func (pvu *PlaylistVideoUpdate) SetResolutionID(id int) *PlaylistVideoUpdate {
+	pvu.mutation.SetResolutionID(id)
+	return pvu
+}
+
+// SetNillableResolutionID sets the resolution edge to Resolution by id if the given value is not nil.
+func (pvu *PlaylistVideoUpdate) SetNillableResolutionID(id *int) *PlaylistVideoUpdate {
+	if id != nil {
+		pvu = pvu.SetResolutionID(*id)
+	}
+	return pvu
+}
+
+// SetResolution sets the resolution edge to Resolution.
+func (pvu *PlaylistVideoUpdate) SetResolution(r *Resolution) *PlaylistVideoUpdate {
+	return pvu.SetResolutionID(r.ID)
+}
+
 // Mutation returns the PlaylistVideoMutation object of the builder.
 func (pvu *PlaylistVideoUpdate) Mutation() *PlaylistVideoMutation {
 	return pvu.mutation
 }
 
+// ClearVideo clears the video edge to Video.
+func (pvu *PlaylistVideoUpdate) ClearVideo() *PlaylistVideoUpdate {
+	pvu.mutation.ClearVideo()
+	return pvu
+}
+
+// ClearPlaylists clears the playlists edge to Playlist.
+func (pvu *PlaylistVideoUpdate) ClearPlaylists() *PlaylistVideoUpdate {
+	pvu.mutation.ClearPlaylists()
+	return pvu
+}
+
+// ClearResolution clears the resolution edge to Resolution.
+func (pvu *PlaylistVideoUpdate) ClearResolution() *PlaylistVideoUpdate {
+	pvu.mutation.ClearResolution()
+	return pvu
+}
+
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (pvu *PlaylistVideoUpdate) Save(ctx context.Context) (int, error) {
+
 	var (
 		err      error
 		affected int
@@ -128,6 +207,111 @@ func (pvu *PlaylistVideoUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: playlistvideo.FieldPlaylistVideoID,
 		})
 	}
+	if pvu.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.VideoTable,
+			Columns: []string{playlistvideo.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvu.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.VideoTable,
+			Columns: []string{playlistvideo.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pvu.mutation.PlaylistsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.PlaylistsTable,
+			Columns: []string{playlistvideo.PlaylistsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlist.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvu.mutation.PlaylistsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.PlaylistsTable,
+			Columns: []string{playlistvideo.PlaylistsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlist.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pvu.mutation.ResolutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.ResolutionTable,
+			Columns: []string{playlistvideo.ResolutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resolution.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvu.mutation.ResolutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.ResolutionTable,
+			Columns: []string{playlistvideo.ResolutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resolution.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pvu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{playlistvideo.Label}
@@ -159,13 +343,89 @@ func (pvuo *PlaylistVideoUpdateOne) AddPlaylistVideoID(i int) *PlaylistVideoUpda
 	return pvuo
 }
 
+// SetVideoID sets the video edge to Video by id.
+func (pvuo *PlaylistVideoUpdateOne) SetVideoID(id int) *PlaylistVideoUpdateOne {
+	pvuo.mutation.SetVideoID(id)
+	return pvuo
+}
+
+// SetNillableVideoID sets the video edge to Video by id if the given value is not nil.
+func (pvuo *PlaylistVideoUpdateOne) SetNillableVideoID(id *int) *PlaylistVideoUpdateOne {
+	if id != nil {
+		pvuo = pvuo.SetVideoID(*id)
+	}
+	return pvuo
+}
+
+// SetVideo sets the video edge to Video.
+func (pvuo *PlaylistVideoUpdateOne) SetVideo(v *Video) *PlaylistVideoUpdateOne {
+	return pvuo.SetVideoID(v.ID)
+}
+
+// SetPlaylistsID sets the playlists edge to Playlist by id.
+func (pvuo *PlaylistVideoUpdateOne) SetPlaylistsID(id int) *PlaylistVideoUpdateOne {
+	pvuo.mutation.SetPlaylistsID(id)
+	return pvuo
+}
+
+// SetNillablePlaylistsID sets the playlists edge to Playlist by id if the given value is not nil.
+func (pvuo *PlaylistVideoUpdateOne) SetNillablePlaylistsID(id *int) *PlaylistVideoUpdateOne {
+	if id != nil {
+		pvuo = pvuo.SetPlaylistsID(*id)
+	}
+	return pvuo
+}
+
+// SetPlaylists sets the playlists edge to Playlist.
+func (pvuo *PlaylistVideoUpdateOne) SetPlaylists(p *Playlist) *PlaylistVideoUpdateOne {
+	return pvuo.SetPlaylistsID(p.ID)
+}
+
+// SetResolutionID sets the resolution edge to Resolution by id.
+func (pvuo *PlaylistVideoUpdateOne) SetResolutionID(id int) *PlaylistVideoUpdateOne {
+	pvuo.mutation.SetResolutionID(id)
+	return pvuo
+}
+
+// SetNillableResolutionID sets the resolution edge to Resolution by id if the given value is not nil.
+func (pvuo *PlaylistVideoUpdateOne) SetNillableResolutionID(id *int) *PlaylistVideoUpdateOne {
+	if id != nil {
+		pvuo = pvuo.SetResolutionID(*id)
+	}
+	return pvuo
+}
+
+// SetResolution sets the resolution edge to Resolution.
+func (pvuo *PlaylistVideoUpdateOne) SetResolution(r *Resolution) *PlaylistVideoUpdateOne {
+	return pvuo.SetResolutionID(r.ID)
+}
+
 // Mutation returns the PlaylistVideoMutation object of the builder.
 func (pvuo *PlaylistVideoUpdateOne) Mutation() *PlaylistVideoMutation {
 	return pvuo.mutation
 }
 
+// ClearVideo clears the video edge to Video.
+func (pvuo *PlaylistVideoUpdateOne) ClearVideo() *PlaylistVideoUpdateOne {
+	pvuo.mutation.ClearVideo()
+	return pvuo
+}
+
+// ClearPlaylists clears the playlists edge to Playlist.
+func (pvuo *PlaylistVideoUpdateOne) ClearPlaylists() *PlaylistVideoUpdateOne {
+	pvuo.mutation.ClearPlaylists()
+	return pvuo
+}
+
+// ClearResolution clears the resolution edge to Resolution.
+func (pvuo *PlaylistVideoUpdateOne) ClearResolution() *PlaylistVideoUpdateOne {
+	pvuo.mutation.ClearResolution()
+	return pvuo
+}
+
 // Save executes the query and returns the updated entity.
 func (pvuo *PlaylistVideoUpdateOne) Save(ctx context.Context) (*PlaylistVideo, error) {
+
 	var (
 		err  error
 		node *PlaylistVideo
@@ -244,6 +504,111 @@ func (pvuo *PlaylistVideoUpdateOne) sqlSave(ctx context.Context) (pv *PlaylistVi
 			Value:  value,
 			Column: playlistvideo.FieldPlaylistVideoID,
 		})
+	}
+	if pvuo.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.VideoTable,
+			Columns: []string{playlistvideo.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvuo.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.VideoTable,
+			Columns: []string{playlistvideo.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pvuo.mutation.PlaylistsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.PlaylistsTable,
+			Columns: []string{playlistvideo.PlaylistsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlist.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvuo.mutation.PlaylistsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.PlaylistsTable,
+			Columns: []string{playlistvideo.PlaylistsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlist.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pvuo.mutation.ResolutionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.ResolutionTable,
+			Columns: []string{playlistvideo.ResolutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resolution.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pvuo.mutation.ResolutionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   playlistvideo.ResolutionTable,
+			Columns: []string{playlistvideo.ResolutionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: resolution.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	pv = &PlaylistVideo{config: pvuo.config}
 	_spec.Assign = pv.assignValues

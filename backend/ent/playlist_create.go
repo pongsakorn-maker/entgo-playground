@@ -10,6 +10,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/user"
 )
 
@@ -26,23 +27,38 @@ func (pc *PlaylistCreate) SetPlaylistID(i int) *PlaylistCreate {
 	return pc
 }
 
-// SetPlaylistOwnerID sets the playlist_owner edge to User by id.
-func (pc *PlaylistCreate) SetPlaylistOwnerID(id int) *PlaylistCreate {
-	pc.mutation.SetPlaylistOwnerID(id)
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (pc *PlaylistCreate) AddPlaylistVideoIDs(ids ...int) *PlaylistCreate {
+	pc.mutation.AddPlaylistVideoIDs(ids...)
 	return pc
 }
 
-// SetNillablePlaylistOwnerID sets the playlist_owner edge to User by id if the given value is not nil.
-func (pc *PlaylistCreate) SetNillablePlaylistOwnerID(id *int) *PlaylistCreate {
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (pc *PlaylistCreate) AddPlaylistVideos(p ...*PlaylistVideo) *PlaylistCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pc.AddPlaylistVideoIDs(ids...)
+}
+
+// SetOwnerID sets the owner edge to User by id.
+func (pc *PlaylistCreate) SetOwnerID(id int) *PlaylistCreate {
+	pc.mutation.SetOwnerID(id)
+	return pc
+}
+
+// SetNillableOwnerID sets the owner edge to User by id if the given value is not nil.
+func (pc *PlaylistCreate) SetNillableOwnerID(id *int) *PlaylistCreate {
 	if id != nil {
-		pc = pc.SetPlaylistOwnerID(*id)
+		pc = pc.SetOwnerID(*id)
 	}
 	return pc
 }
 
-// SetPlaylistOwner sets the playlist_owner edge to User.
-func (pc *PlaylistCreate) SetPlaylistOwner(u *User) *PlaylistCreate {
-	return pc.SetPlaylistOwnerID(u.ID)
+// SetOwner sets the owner edge to User.
+func (pc *PlaylistCreate) SetOwner(u *User) *PlaylistCreate {
+	return pc.SetOwnerID(u.ID)
 }
 
 // Mutation returns the PlaylistMutation object of the builder.
@@ -130,12 +146,31 @@ func (pc *PlaylistCreate) createSpec() (*Playlist, *sqlgraph.CreateSpec) {
 		})
 		pl.PlaylistID = value
 	}
-	if nodes := pc.mutation.PlaylistOwnerIDs(); len(nodes) > 0 {
+	if nodes := pc.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   playlist.PlaylistVideosTable,
+			Columns: []string{playlist.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   playlist.PlaylistOwnerTable,
-			Columns: []string{playlist.PlaylistOwnerColumn},
+			Table:   playlist.OwnerTable,
+			Columns: []string{playlist.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

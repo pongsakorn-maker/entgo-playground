@@ -7,7 +7,10 @@ import (
 	"strings"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
+	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
+	"github.com/pongsakorn-maker/entgo-playground/ent/video"
 )
 
 // PlaylistVideo is the model entity for the PlaylistVideo schema.
@@ -17,6 +20,67 @@ type PlaylistVideo struct {
 	ID int `json:"id,omitempty"`
 	// PlaylistVideoID holds the value of the "PlaylistVideo_ID" field.
 	PlaylistVideoID int `json:"PlaylistVideo_ID,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the PlaylistVideoQuery when eager-loading is set.
+	Edges                      PlaylistVideoEdges `json:"edges"`
+	playlist_playlist_videos   *int
+	resolution_playlist_videos *int
+	video_playlist_videos      *int
+}
+
+// PlaylistVideoEdges holds the relations/edges for other nodes in the graph.
+type PlaylistVideoEdges struct {
+	// Video holds the value of the video edge.
+	Video *Video
+	// Playlists holds the value of the playlists edge.
+	Playlists *Playlist
+	// Resolution holds the value of the resolution edge.
+	Resolution *Resolution
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [3]bool
+}
+
+// VideoOrErr returns the Video value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PlaylistVideoEdges) VideoOrErr() (*Video, error) {
+	if e.loadedTypes[0] {
+		if e.Video == nil {
+			// The edge video was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: video.Label}
+		}
+		return e.Video, nil
+	}
+	return nil, &NotLoadedError{edge: "video"}
+}
+
+// PlaylistsOrErr returns the Playlists value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PlaylistVideoEdges) PlaylistsOrErr() (*Playlist, error) {
+	if e.loadedTypes[1] {
+		if e.Playlists == nil {
+			// The edge playlists was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: playlist.Label}
+		}
+		return e.Playlists, nil
+	}
+	return nil, &NotLoadedError{edge: "playlists"}
+}
+
+// ResolutionOrErr returns the Resolution value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PlaylistVideoEdges) ResolutionOrErr() (*Resolution, error) {
+	if e.loadedTypes[2] {
+		if e.Resolution == nil {
+			// The edge resolution was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: resolution.Label}
+		}
+		return e.Resolution, nil
+	}
+	return nil, &NotLoadedError{edge: "resolution"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,6 +88,15 @@ func (*PlaylistVideo) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // id
 		&sql.NullInt64{}, // PlaylistVideo_ID
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*PlaylistVideo) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // playlist_playlist_videos
+		&sql.NullInt64{}, // resolution_playlist_videos
+		&sql.NullInt64{}, // video_playlist_videos
 	}
 }
 
@@ -44,7 +117,43 @@ func (pv *PlaylistVideo) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		pv.PlaylistVideoID = int(value.Int64)
 	}
+	values = values[1:]
+	if len(values) == len(playlistvideo.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field playlist_playlist_videos", value)
+		} else if value.Valid {
+			pv.playlist_playlist_videos = new(int)
+			*pv.playlist_playlist_videos = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field resolution_playlist_videos", value)
+		} else if value.Valid {
+			pv.resolution_playlist_videos = new(int)
+			*pv.resolution_playlist_videos = int(value.Int64)
+		}
+		if value, ok := values[2].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field video_playlist_videos", value)
+		} else if value.Valid {
+			pv.video_playlist_videos = new(int)
+			*pv.video_playlist_videos = int(value.Int64)
+		}
+	}
 	return nil
+}
+
+// QueryVideo queries the video edge of the PlaylistVideo.
+func (pv *PlaylistVideo) QueryVideo() *VideoQuery {
+	return (&PlaylistVideoClient{config: pv.config}).QueryVideo(pv)
+}
+
+// QueryPlaylists queries the playlists edge of the PlaylistVideo.
+func (pv *PlaylistVideo) QueryPlaylists() *PlaylistQuery {
+	return (&PlaylistVideoClient{config: pv.config}).QueryPlaylists(pv)
+}
+
+// QueryResolution queries the resolution edge of the PlaylistVideo.
+func (pv *PlaylistVideo) QueryResolution() *ResolutionQuery {
+	return (&PlaylistVideoClient{config: pv.config}).QueryResolution(pv)
 }
 
 // Update returns a builder for updating this PlaylistVideo.

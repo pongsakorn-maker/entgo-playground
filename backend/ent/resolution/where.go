@@ -4,6 +4,7 @@ package resolution
 
 import (
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 )
 
@@ -170,6 +171,34 @@ func ResolutionIDLT(v int) predicate.Resolution {
 func ResolutionIDLTE(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldResolutionID), v))
+	})
+}
+
+// HasPlaylistVideos applies the HasEdge predicate on the "playlist_videos" edge.
+func HasPlaylistVideos() predicate.Resolution {
+	return predicate.Resolution(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistVideosTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPlaylistVideosWith applies the HasEdge predicate on the "playlist_videos" edge with a given conditions (other predicates).
+func HasPlaylistVideosWith(preds ...predicate.PlaylistVideo) predicate.Resolution {
+	return predicate.Resolution(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistVideosInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

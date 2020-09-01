@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 	"github.com/pongsakorn-maker/entgo-playground/ent/user"
 	"github.com/pongsakorn-maker/entgo-playground/ent/video"
@@ -41,6 +42,21 @@ func (vu *VideoUpdate) AddVideoID(i int) *VideoUpdate {
 	return vu
 }
 
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (vu *VideoUpdate) AddPlaylistVideoIDs(ids ...int) *VideoUpdate {
+	vu.mutation.AddPlaylistVideoIDs(ids...)
+	return vu
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (vu *VideoUpdate) AddPlaylistVideos(p ...*PlaylistVideo) *VideoUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vu.AddPlaylistVideoIDs(ids...)
+}
+
 // SetOwnerID sets the owner edge to User by id.
 func (vu *VideoUpdate) SetOwnerID(id int) *VideoUpdate {
 	vu.mutation.SetOwnerID(id)
@@ -63,6 +79,21 @@ func (vu *VideoUpdate) SetOwner(u *User) *VideoUpdate {
 // Mutation returns the VideoMutation object of the builder.
 func (vu *VideoUpdate) Mutation() *VideoMutation {
 	return vu.mutation
+}
+
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (vu *VideoUpdate) RemovePlaylistVideoIDs(ids ...int) *VideoUpdate {
+	vu.mutation.RemovePlaylistVideoIDs(ids...)
+	return vu
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (vu *VideoUpdate) RemovePlaylistVideos(p ...*PlaylistVideo) *VideoUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vu.RemovePlaylistVideoIDs(ids...)
 }
 
 // ClearOwner clears the owner edge to User.
@@ -155,6 +186,44 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: video.FieldVideoID,
 		})
 	}
+	if nodes := vu.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   video.PlaylistVideosTable,
+			Columns: []string{video.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vu.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   video.PlaylistVideosTable,
+			Columns: []string{video.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if vu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -221,6 +290,21 @@ func (vuo *VideoUpdateOne) AddVideoID(i int) *VideoUpdateOne {
 	return vuo
 }
 
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (vuo *VideoUpdateOne) AddPlaylistVideoIDs(ids ...int) *VideoUpdateOne {
+	vuo.mutation.AddPlaylistVideoIDs(ids...)
+	return vuo
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (vuo *VideoUpdateOne) AddPlaylistVideos(p ...*PlaylistVideo) *VideoUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vuo.AddPlaylistVideoIDs(ids...)
+}
+
 // SetOwnerID sets the owner edge to User by id.
 func (vuo *VideoUpdateOne) SetOwnerID(id int) *VideoUpdateOne {
 	vuo.mutation.SetOwnerID(id)
@@ -243,6 +327,21 @@ func (vuo *VideoUpdateOne) SetOwner(u *User) *VideoUpdateOne {
 // Mutation returns the VideoMutation object of the builder.
 func (vuo *VideoUpdateOne) Mutation() *VideoMutation {
 	return vuo.mutation
+}
+
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (vuo *VideoUpdateOne) RemovePlaylistVideoIDs(ids ...int) *VideoUpdateOne {
+	vuo.mutation.RemovePlaylistVideoIDs(ids...)
+	return vuo
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (vuo *VideoUpdateOne) RemovePlaylistVideos(p ...*PlaylistVideo) *VideoUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vuo.RemovePlaylistVideoIDs(ids...)
 }
 
 // ClearOwner clears the owner edge to User.
@@ -332,6 +431,44 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (v *Video, err error) {
 			Value:  value,
 			Column: video.FieldVideoID,
 		})
+	}
+	if nodes := vuo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   video.PlaylistVideosTable,
+			Columns: []string{video.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vuo.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   video.PlaylistVideosTable,
+			Columns: []string{video.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if vuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

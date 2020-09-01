@@ -26,17 +26,28 @@ type Video struct {
 
 // VideoEdges holds the relations/edges for other nodes in the graph.
 type VideoEdges struct {
+	// PlaylistVideos holds the value of the playlist_videos edge.
+	PlaylistVideos []*PlaylistVideo
 	// Owner holds the value of the owner edge.
 	Owner *User
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
+}
+
+// PlaylistVideosOrErr returns the PlaylistVideos value or an error if the edge
+// was not loaded in eager-loading.
+func (e VideoEdges) PlaylistVideosOrErr() ([]*PlaylistVideo, error) {
+	if e.loadedTypes[0] {
+		return e.PlaylistVideos, nil
+	}
+	return nil, &NotLoadedError{edge: "playlist_videos"}
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e VideoEdges) OwnerOrErr() (*User, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Owner == nil {
 			// The edge owner was loaded in eager-loading,
 			// but was not found.
@@ -89,6 +100,11 @@ func (v *Video) assignValues(values ...interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryPlaylistVideos queries the playlist_videos edge of the Video.
+func (v *Video) QueryPlaylistVideos() *PlaylistVideoQuery {
+	return (&VideoClient{config: v.config}).QueryPlaylistVideos(v)
 }
 
 // QueryOwner queries the owner edge of the Video.

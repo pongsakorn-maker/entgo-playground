@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
 )
@@ -23,6 +25,8 @@ type ResolutionQuery struct {
 	order      []OrderFunc
 	unique     []string
 	predicates []predicate.Resolution
+	// eager-loading edges.
+	withPlaylistVideos *PlaylistVideoQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -50,6 +54,24 @@ func (rq *ResolutionQuery) Offset(offset int) *ResolutionQuery {
 func (rq *ResolutionQuery) Order(o ...OrderFunc) *ResolutionQuery {
 	rq.order = append(rq.order, o...)
 	return rq
+}
+
+// QueryPlaylistVideos chains the current query on the playlist_videos edge.
+func (rq *ResolutionQuery) QueryPlaylistVideos() *PlaylistVideoQuery {
+	query := &PlaylistVideoQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resolution.Table, resolution.FieldID, rq.sqlQuery()),
+			sqlgraph.To(playlistvideo.Table, playlistvideo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, resolution.PlaylistVideosTable, resolution.PlaylistVideosColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Resolution entity in the query. Returns *NotFoundError when no resolution was found.
@@ -231,6 +253,17 @@ func (rq *ResolutionQuery) Clone() *ResolutionQuery {
 	}
 }
 
+//  WithPlaylistVideos tells the query-builder to eager-loads the nodes that are connected to
+// the "playlist_videos" edge. The optional arguments used to configure the query builder of the edge.
+func (rq *ResolutionQuery) WithPlaylistVideos(opts ...func(*PlaylistVideoQuery)) *ResolutionQuery {
+	query := &PlaylistVideoQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withPlaylistVideos = query
+	return rq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -295,8 +328,11 @@ func (rq *ResolutionQuery) prepareQuery(ctx context.Context) error {
 
 func (rq *ResolutionQuery) sqlAll(ctx context.Context) ([]*Resolution, error) {
 	var (
-		nodes = []*Resolution{}
-		_spec = rq.querySpec()
+		nodes       = []*Resolution{}
+		_spec       = rq.querySpec()
+		loadedTypes = [1]bool{
+			rq.withPlaylistVideos != nil,
+		}
 	)
 	_spec.ScanValues = func() []interface{} {
 		node := &Resolution{config: rq.config}
@@ -309,6 +345,7 @@ func (rq *ResolutionQuery) sqlAll(ctx context.Context) ([]*Resolution, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(values...)
 	}
 	if err := sqlgraph.QueryNodes(ctx, rq.driver, _spec); err != nil {
@@ -317,6 +354,35 @@ func (rq *ResolutionQuery) sqlAll(ctx context.Context) ([]*Resolution, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := rq.withPlaylistVideos; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Resolution)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.PlaylistVideo(func(s *sql.Selector) {
+			s.Where(sql.InValues(resolution.PlaylistVideosColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.resolution_playlist_videos
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "resolution_playlist_videos" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "resolution_playlist_videos" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PlaylistVideos = append(node.Edges.PlaylistVideos, n)
+		}
+	}
+
 	return nodes, nil
 }
 

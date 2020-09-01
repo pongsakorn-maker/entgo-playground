@@ -10,18 +10,27 @@ const (
 	// FieldPlaylistID holds the string denoting the playlist_id field in the database.
 	FieldPlaylistID = "playlist_id"
 
-	// EdgePlaylistOwner holds the string denoting the playlist_owner edge name in mutations.
-	EdgePlaylistOwner = "playlist_owner"
+	// EdgePlaylistVideos holds the string denoting the playlist_videos edge name in mutations.
+	EdgePlaylistVideos = "playlist_videos"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 
 	// Table holds the table name of the playlist in the database.
 	Table = "playlists"
-	// PlaylistOwnerTable is the table the holds the playlist_owner relation/edge.
-	PlaylistOwnerTable = "playlists"
-	// PlaylistOwnerInverseTable is the table name for the User entity.
+	// PlaylistVideosTable is the table the holds the playlist_videos relation/edge.
+	PlaylistVideosTable = "playlist_videos"
+	// PlaylistVideosInverseTable is the table name for the PlaylistVideo entity.
+	// It exists in this package in order to avoid circular dependency with the "playlistvideo" package.
+	PlaylistVideosInverseTable = "playlist_videos"
+	// PlaylistVideosColumn is the table column denoting the playlist_videos relation/edge.
+	PlaylistVideosColumn = "playlist_playlist_videos"
+	// OwnerTable is the table the holds the owner relation/edge.
+	OwnerTable = "playlists"
+	// OwnerInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	PlaylistOwnerInverseTable = "users"
-	// PlaylistOwnerColumn is the table column denoting the playlist_owner relation/edge.
-	PlaylistOwnerColumn = "user_playlists"
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "user_playlists"
 )
 
 // Columns holds all SQL columns for playlist fields.

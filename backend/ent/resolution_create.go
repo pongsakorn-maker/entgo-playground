@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
 )
 
@@ -23,6 +24,21 @@ type ResolutionCreate struct {
 func (rc *ResolutionCreate) SetResolutionID(i int) *ResolutionCreate {
 	rc.mutation.SetResolutionID(i)
 	return rc
+}
+
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (rc *ResolutionCreate) AddPlaylistVideoIDs(ids ...int) *ResolutionCreate {
+	rc.mutation.AddPlaylistVideoIDs(ids...)
+	return rc
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (rc *ResolutionCreate) AddPlaylistVideos(p ...*PlaylistVideo) *ResolutionCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return rc.AddPlaylistVideoIDs(ids...)
 }
 
 // Mutation returns the ResolutionMutation object of the builder.
@@ -109,6 +125,25 @@ func (rc *ResolutionCreate) createSpec() (*Resolution, *sqlgraph.CreateSpec) {
 			Column: resolution.FieldResolutionID,
 		})
 		r.ResolutionID = value
+	}
+	if nodes := rc.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resolution.PlaylistVideosTable,
+			Columns: []string{resolution.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return r, _spec
 }

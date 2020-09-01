@@ -17,6 +17,27 @@ type Resolution struct {
 	ID int `json:"id,omitempty"`
 	// ResolutionID holds the value of the "Resolution_ID" field.
 	ResolutionID int `json:"Resolution_ID,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ResolutionQuery when eager-loading is set.
+	Edges ResolutionEdges `json:"edges"`
+}
+
+// ResolutionEdges holds the relations/edges for other nodes in the graph.
+type ResolutionEdges struct {
+	// PlaylistVideos holds the value of the playlist_videos edge.
+	PlaylistVideos []*PlaylistVideo
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// PlaylistVideosOrErr returns the PlaylistVideos value or an error if the edge
+// was not loaded in eager-loading.
+func (e ResolutionEdges) PlaylistVideosOrErr() ([]*PlaylistVideo, error) {
+	if e.loadedTypes[0] {
+		return e.PlaylistVideos, nil
+	}
+	return nil, &NotLoadedError{edge: "playlist_videos"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -45,6 +66,11 @@ func (r *Resolution) assignValues(values ...interface{}) error {
 		r.ResolutionID = int(value.Int64)
 	}
 	return nil
+}
+
+// QueryPlaylistVideos queries the playlist_videos edge of the Resolution.
+func (r *Resolution) QueryPlaylistVideos() *PlaylistVideoQuery {
+	return (&ResolutionClient{config: r.config}).QueryPlaylistVideos(r)
 }
 
 // Update returns a builder for updating this Resolution.

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -12,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/pongsakorn-maker/entgo-playground/ent/playlist"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 	"github.com/pongsakorn-maker/entgo-playground/ent/user"
 )
@@ -25,8 +27,9 @@ type PlaylistQuery struct {
 	unique     []string
 	predicates []predicate.Playlist
 	// eager-loading edges.
-	withPlaylistOwner *UserQuery
-	withFKs           bool
+	withPlaylistVideos *PlaylistVideoQuery
+	withOwner          *UserQuery
+	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,8 +59,26 @@ func (pq *PlaylistQuery) Order(o ...OrderFunc) *PlaylistQuery {
 	return pq
 }
 
-// QueryPlaylistOwner chains the current query on the playlist_owner edge.
-func (pq *PlaylistQuery) QueryPlaylistOwner() *UserQuery {
+// QueryPlaylistVideos chains the current query on the playlist_videos edge.
+func (pq *PlaylistQuery) QueryPlaylistVideos() *PlaylistVideoQuery {
+	query := &PlaylistVideoQuery{config: pq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(playlist.Table, playlist.FieldID, pq.sqlQuery()),
+			sqlgraph.To(playlistvideo.Table, playlistvideo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, playlist.PlaylistVideosTable, playlist.PlaylistVideosColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOwner chains the current query on the owner edge.
+func (pq *PlaylistQuery) QueryOwner() *UserQuery {
 	query := &UserQuery{config: pq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := pq.prepareQuery(ctx); err != nil {
@@ -66,7 +87,7 @@ func (pq *PlaylistQuery) QueryPlaylistOwner() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(playlist.Table, playlist.FieldID, pq.sqlQuery()),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, playlist.PlaylistOwnerTable, playlist.PlaylistOwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, playlist.OwnerTable, playlist.OwnerColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -253,14 +274,25 @@ func (pq *PlaylistQuery) Clone() *PlaylistQuery {
 	}
 }
 
-//  WithPlaylistOwner tells the query-builder to eager-loads the nodes that are connected to
-// the "playlist_owner" edge. The optional arguments used to configure the query builder of the edge.
-func (pq *PlaylistQuery) WithPlaylistOwner(opts ...func(*UserQuery)) *PlaylistQuery {
+//  WithPlaylistVideos tells the query-builder to eager-loads the nodes that are connected to
+// the "playlist_videos" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *PlaylistQuery) WithPlaylistVideos(opts ...func(*PlaylistVideoQuery)) *PlaylistQuery {
+	query := &PlaylistVideoQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withPlaylistVideos = query
+	return pq
+}
+
+//  WithOwner tells the query-builder to eager-loads the nodes that are connected to
+// the "owner" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *PlaylistQuery) WithOwner(opts ...func(*UserQuery)) *PlaylistQuery {
 	query := &UserQuery{config: pq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	pq.withPlaylistOwner = query
+	pq.withOwner = query
 	return pq
 }
 
@@ -331,11 +363,12 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 		nodes       = []*Playlist{}
 		withFKs     = pq.withFKs
 		_spec       = pq.querySpec()
-		loadedTypes = [1]bool{
-			pq.withPlaylistOwner != nil,
+		loadedTypes = [2]bool{
+			pq.withPlaylistVideos != nil,
+			pq.withOwner != nil,
 		}
 	)
-	if pq.withPlaylistOwner != nil {
+	if pq.withOwner != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -365,7 +398,35 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 		return nodes, nil
 	}
 
-	if query := pq.withPlaylistOwner; query != nil {
+	if query := pq.withPlaylistVideos; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Playlist)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.PlaylistVideo(func(s *sql.Selector) {
+			s.Where(sql.InValues(playlist.PlaylistVideosColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.playlist_playlist_videos
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "playlist_playlist_videos" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "playlist_playlist_videos" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.PlaylistVideos = append(node.Edges.PlaylistVideos, n)
+		}
+	}
+
+	if query := pq.withOwner; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Playlist)
 		for i := range nodes {
@@ -385,7 +446,7 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_playlists" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.PlaylistOwner = n
+				nodes[i].Edges.Owner = n
 			}
 		}
 	}

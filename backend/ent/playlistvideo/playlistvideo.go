@@ -10,12 +10,47 @@ const (
 	// FieldPlaylistVideoID holds the string denoting the playlistvideo_id field in the database.
 	FieldPlaylistVideoID = "playlist_video_id"
 
+	// EdgeVideo holds the string denoting the video edge name in mutations.
+	EdgeVideo = "video"
+	// EdgePlaylists holds the string denoting the playlists edge name in mutations.
+	EdgePlaylists = "playlists"
+	// EdgeResolution holds the string denoting the resolution edge name in mutations.
+	EdgeResolution = "resolution"
+
 	// Table holds the table name of the playlistvideo in the database.
 	Table = "playlist_videos"
+	// VideoTable is the table the holds the video relation/edge.
+	VideoTable = "playlist_videos"
+	// VideoInverseTable is the table name for the Video entity.
+	// It exists in this package in order to avoid circular dependency with the "video" package.
+	VideoInverseTable = "videos"
+	// VideoColumn is the table column denoting the video relation/edge.
+	VideoColumn = "video_playlist_videos"
+	// PlaylistsTable is the table the holds the playlists relation/edge.
+	PlaylistsTable = "playlist_videos"
+	// PlaylistsInverseTable is the table name for the Playlist entity.
+	// It exists in this package in order to avoid circular dependency with the "playlist" package.
+	PlaylistsInverseTable = "playlists"
+	// PlaylistsColumn is the table column denoting the playlists relation/edge.
+	PlaylistsColumn = "playlist_playlist_videos"
+	// ResolutionTable is the table the holds the resolution relation/edge.
+	ResolutionTable = "playlist_videos"
+	// ResolutionInverseTable is the table name for the Resolution entity.
+	// It exists in this package in order to avoid circular dependency with the "resolution" package.
+	ResolutionInverseTable = "resolutions"
+	// ResolutionColumn is the table column denoting the resolution relation/edge.
+	ResolutionColumn = "resolution_playlist_videos"
 )
 
 // Columns holds all SQL columns for playlistvideo fields.
 var Columns = []string{
 	FieldID,
 	FieldPlaylistVideoID,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the PlaylistVideo type.
+var ForeignKeys = []string{
+	"playlist_playlist_videos",
+	"resolution_playlist_videos",
+	"video_playlist_videos",
 }

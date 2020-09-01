@@ -174,6 +174,34 @@ func VideoIDLTE(v int) predicate.Video {
 	})
 }
 
+// HasPlaylistVideos applies the HasEdge predicate on the "playlist_videos" edge.
+func HasPlaylistVideos() predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistVideosTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPlaylistVideosWith applies the HasEdge predicate on the "playlist_videos" edge with a given conditions (other predicates).
+func HasPlaylistVideosWith(preds ...predicate.PlaylistVideo) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PlaylistVideosInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasOwner applies the HasEdge predicate on the "owner" edge.
 func HasOwner() predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {

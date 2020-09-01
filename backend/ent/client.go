@@ -228,15 +228,31 @@ func (c *PlaylistClient) GetX(ctx context.Context, id int) *Playlist {
 	return pl
 }
 
-// QueryPlaylistOwner queries the playlist_owner edge of a Playlist.
-func (c *PlaylistClient) QueryPlaylistOwner(pl *Playlist) *UserQuery {
+// QueryPlaylistVideos queries the playlist_videos edge of a Playlist.
+func (c *PlaylistClient) QueryPlaylistVideos(pl *Playlist) *PlaylistVideoQuery {
+	query := &PlaylistVideoQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pl.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(playlist.Table, playlist.FieldID, id),
+			sqlgraph.To(playlistvideo.Table, playlistvideo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, playlist.PlaylistVideosTable, playlist.PlaylistVideosColumn),
+		)
+		fromV = sqlgraph.Neighbors(pl.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOwner queries the owner edge of a Playlist.
+func (c *PlaylistClient) QueryOwner(pl *Playlist) *UserQuery {
 	query := &UserQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := pl.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(playlist.Table, playlist.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, playlist.PlaylistOwnerTable, playlist.PlaylistOwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, playlist.OwnerTable, playlist.OwnerColumn),
 		)
 		fromV = sqlgraph.Neighbors(pl.driver.Dialect(), step)
 		return fromV, nil
@@ -332,6 +348,54 @@ func (c *PlaylistVideoClient) GetX(ctx context.Context, id int) *PlaylistVideo {
 	return pv
 }
 
+// QueryVideo queries the video edge of a PlaylistVideo.
+func (c *PlaylistVideoClient) QueryVideo(pv *PlaylistVideo) *VideoQuery {
+	query := &VideoQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(playlistvideo.Table, playlistvideo.FieldID, id),
+			sqlgraph.To(video.Table, video.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, playlistvideo.VideoTable, playlistvideo.VideoColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPlaylists queries the playlists edge of a PlaylistVideo.
+func (c *PlaylistVideoClient) QueryPlaylists(pv *PlaylistVideo) *PlaylistQuery {
+	query := &PlaylistQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(playlistvideo.Table, playlistvideo.FieldID, id),
+			sqlgraph.To(playlist.Table, playlist.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, playlistvideo.PlaylistsTable, playlistvideo.PlaylistsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryResolution queries the resolution edge of a PlaylistVideo.
+func (c *PlaylistVideoClient) QueryResolution(pv *PlaylistVideo) *ResolutionQuery {
+	query := &ResolutionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pv.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(playlistvideo.Table, playlistvideo.FieldID, id),
+			sqlgraph.To(resolution.Table, resolution.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, playlistvideo.ResolutionTable, playlistvideo.ResolutionColumn),
+		)
+		fromV = sqlgraph.Neighbors(pv.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PlaylistVideoClient) Hooks() []Hook {
 	return c.hooks.PlaylistVideo
@@ -418,6 +482,22 @@ func (c *ResolutionClient) GetX(ctx context.Context, id int) *Resolution {
 		panic(err)
 	}
 	return r
+}
+
+// QueryPlaylistVideos queries the playlist_videos edge of a Resolution.
+func (c *ResolutionClient) QueryPlaylistVideos(r *Resolution) *PlaylistVideoQuery {
+	query := &PlaylistVideoQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resolution.Table, resolution.FieldID, id),
+			sqlgraph.To(playlistvideo.Table, playlistvideo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, resolution.PlaylistVideosTable, resolution.PlaylistVideosColumn),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -626,6 +706,22 @@ func (c *VideoClient) GetX(ctx context.Context, id int) *Video {
 		panic(err)
 	}
 	return v
+}
+
+// QueryPlaylistVideos queries the playlist_videos edge of a Video.
+func (c *VideoClient) QueryPlaylistVideos(v *Video) *PlaylistVideoQuery {
+	query := &PlaylistVideoQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := v.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(video.Table, video.FieldID, id),
+			sqlgraph.To(playlistvideo.Table, playlistvideo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, video.PlaylistVideosTable, video.PlaylistVideosColumn),
+		)
+		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // QueryOwner queries the owner edge of a Video.

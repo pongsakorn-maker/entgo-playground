@@ -21,6 +21,7 @@ func (Playlist) Fields() []ent.Field {
 // Edges of the Playlist.
 func (Playlist) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("playlist_owner", User.Type).Ref("playlists").Unique(),
+		edge.To("playlist_videos", PlaylistVideo.Type),
+		edge.From("owner", User.Type).Ref("playlists").Unique(),
 	}
 }

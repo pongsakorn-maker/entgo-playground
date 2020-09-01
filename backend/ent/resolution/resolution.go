@@ -10,8 +10,18 @@ const (
 	// FieldResolutionID holds the string denoting the resolution_id field in the database.
 	FieldResolutionID = "resolution_id"
 
+	// EdgePlaylistVideos holds the string denoting the playlist_videos edge name in mutations.
+	EdgePlaylistVideos = "playlist_videos"
+
 	// Table holds the table name of the resolution in the database.
 	Table = "resolutions"
+	// PlaylistVideosTable is the table the holds the playlist_videos relation/edge.
+	PlaylistVideosTable = "playlist_videos"
+	// PlaylistVideosInverseTable is the table name for the PlaylistVideo entity.
+	// It exists in this package in order to avoid circular dependency with the "playlistvideo" package.
+	PlaylistVideosInverseTable = "playlist_videos"
+	// PlaylistVideosColumn is the table column denoting the playlist_videos relation/edge.
+	PlaylistVideosColumn = "resolution_playlist_videos"
 )
 
 // Columns holds all SQL columns for resolution fields.

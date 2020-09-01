@@ -9,6 +9,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/predicate"
 	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
 )
@@ -40,13 +41,44 @@ func (ru *ResolutionUpdate) AddResolutionID(i int) *ResolutionUpdate {
 	return ru
 }
 
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (ru *ResolutionUpdate) AddPlaylistVideoIDs(ids ...int) *ResolutionUpdate {
+	ru.mutation.AddPlaylistVideoIDs(ids...)
+	return ru
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (ru *ResolutionUpdate) AddPlaylistVideos(p ...*PlaylistVideo) *ResolutionUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ru.AddPlaylistVideoIDs(ids...)
+}
+
 // Mutation returns the ResolutionMutation object of the builder.
 func (ru *ResolutionUpdate) Mutation() *ResolutionMutation {
 	return ru.mutation
 }
 
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (ru *ResolutionUpdate) RemovePlaylistVideoIDs(ids ...int) *ResolutionUpdate {
+	ru.mutation.RemovePlaylistVideoIDs(ids...)
+	return ru
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (ru *ResolutionUpdate) RemovePlaylistVideos(p ...*PlaylistVideo) *ResolutionUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ru.RemovePlaylistVideoIDs(ids...)
+}
+
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ru *ResolutionUpdate) Save(ctx context.Context) (int, error) {
+
 	var (
 		err      error
 		affected int
@@ -128,6 +160,44 @@ func (ru *ResolutionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resolution.FieldResolutionID,
 		})
 	}
+	if nodes := ru.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resolution.PlaylistVideosTable,
+			Columns: []string{resolution.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resolution.PlaylistVideosTable,
+			Columns: []string{resolution.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{resolution.Label}
@@ -159,13 +229,44 @@ func (ruo *ResolutionUpdateOne) AddResolutionID(i int) *ResolutionUpdateOne {
 	return ruo
 }
 
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (ruo *ResolutionUpdateOne) AddPlaylistVideoIDs(ids ...int) *ResolutionUpdateOne {
+	ruo.mutation.AddPlaylistVideoIDs(ids...)
+	return ruo
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (ruo *ResolutionUpdateOne) AddPlaylistVideos(p ...*PlaylistVideo) *ResolutionUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ruo.AddPlaylistVideoIDs(ids...)
+}
+
 // Mutation returns the ResolutionMutation object of the builder.
 func (ruo *ResolutionUpdateOne) Mutation() *ResolutionMutation {
 	return ruo.mutation
 }
 
+// RemovePlaylistVideoIDs removes the playlist_videos edge to PlaylistVideo by ids.
+func (ruo *ResolutionUpdateOne) RemovePlaylistVideoIDs(ids ...int) *ResolutionUpdateOne {
+	ruo.mutation.RemovePlaylistVideoIDs(ids...)
+	return ruo
+}
+
+// RemovePlaylistVideos removes playlist_videos edges to PlaylistVideo.
+func (ruo *ResolutionUpdateOne) RemovePlaylistVideos(p ...*PlaylistVideo) *ResolutionUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ruo.RemovePlaylistVideoIDs(ids...)
+}
+
 // Save executes the query and returns the updated entity.
 func (ruo *ResolutionUpdateOne) Save(ctx context.Context) (*Resolution, error) {
+
 	var (
 		err  error
 		node *Resolution
@@ -244,6 +345,44 @@ func (ruo *ResolutionUpdateOne) sqlSave(ctx context.Context) (r *Resolution, err
 			Value:  value,
 			Column: resolution.FieldResolutionID,
 		})
+	}
+	if nodes := ruo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resolution.PlaylistVideosTable,
+			Columns: []string{resolution.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   resolution.PlaylistVideosTable,
+			Columns: []string{resolution.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	r = &Resolution{config: ruo.config}
 	_spec.Assign = r.assignValues

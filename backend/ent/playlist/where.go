@@ -174,25 +174,53 @@ func PlaylistIDLTE(v int) predicate.Playlist {
 	})
 }
 
-// HasPlaylistOwner applies the HasEdge predicate on the "playlist_owner" edge.
-func HasPlaylistOwner() predicate.Playlist {
+// HasPlaylistVideos applies the HasEdge predicate on the "playlist_videos" edge.
+func HasPlaylistVideos() predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PlaylistOwnerTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PlaylistOwnerTable, PlaylistOwnerColumn),
+			sqlgraph.To(PlaylistVideosTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasPlaylistOwnerWith applies the HasEdge predicate on the "playlist_owner" edge with a given conditions (other predicates).
-func HasPlaylistOwnerWith(preds ...predicate.User) predicate.Playlist {
+// HasPlaylistVideosWith applies the HasEdge predicate on the "playlist_videos" edge with a given conditions (other predicates).
+func HasPlaylistVideosWith(preds ...predicate.PlaylistVideo) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(PlaylistOwnerInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PlaylistOwnerTable, PlaylistOwnerColumn),
+			sqlgraph.To(PlaylistVideosInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PlaylistVideosTable, PlaylistVideosColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.Playlist {
+	return predicate.Playlist(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OwnerTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.User) predicate.Playlist {
+	return predicate.Playlist(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OwnerInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

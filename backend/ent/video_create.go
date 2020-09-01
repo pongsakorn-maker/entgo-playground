@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/pongsakorn-maker/entgo-playground/ent/playlistvideo"
 	"github.com/pongsakorn-maker/entgo-playground/ent/user"
 	"github.com/pongsakorn-maker/entgo-playground/ent/video"
 )
@@ -24,6 +25,21 @@ type VideoCreate struct {
 func (vc *VideoCreate) SetVideoID(i int) *VideoCreate {
 	vc.mutation.SetVideoID(i)
 	return vc
+}
+
+// AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
+func (vc *VideoCreate) AddPlaylistVideoIDs(ids ...int) *VideoCreate {
+	vc.mutation.AddPlaylistVideoIDs(ids...)
+	return vc
+}
+
+// AddPlaylistVideos adds the playlist_videos edges to PlaylistVideo.
+func (vc *VideoCreate) AddPlaylistVideos(p ...*PlaylistVideo) *VideoCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return vc.AddPlaylistVideoIDs(ids...)
 }
 
 // SetOwnerID sets the owner edge to User by id.
@@ -129,6 +145,25 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 			Column: video.FieldVideoID,
 		})
 		v.VideoID = value
+	}
+	if nodes := vc.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   video.PlaylistVideosTable,
+			Columns: []string{video.PlaylistVideosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: playlistvideo.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := vc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
