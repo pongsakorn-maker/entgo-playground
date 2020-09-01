@@ -15,8 +15,12 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// UserID holds the value of the "User_ID" field.
-	UserID int `json:"User_ID,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
+	// Username holds the value of the "username" field.
+	Username string `json:"username,omitempty"`
+	// Password holds the value of the "password" field.
+	Password string `json:"password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -54,8 +58,10 @@ func (e UserEdges) VideosOrErr() ([]*Video, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // User_ID
+		&sql.NullInt64{},  // id
+		&sql.NullInt64{},  // user_id
+		&sql.NullString{}, // username
+		&sql.NullString{}, // password
 	}
 }
 
@@ -72,9 +78,19 @@ func (u *User) assignValues(values ...interface{}) error {
 	u.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field User_ID", values[0])
+		return fmt.Errorf("unexpected type %T for field user_id", values[0])
 	} else if value.Valid {
 		u.UserID = int(value.Int64)
+	}
+	if value, ok := values[1].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field username", values[1])
+	} else if value.Valid {
+		u.Username = value.String
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field password", values[2])
+	} else if value.Valid {
+		u.Password = value.String
 	}
 	return nil
 }
@@ -112,8 +128,12 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
-	builder.WriteString(", User_ID=")
+	builder.WriteString(", user_id=")
 	builder.WriteString(fmt.Sprintf("%v", u.UserID))
+	builder.WriteString(", username=")
+	builder.WriteString(u.Username)
+	builder.WriteString(", password=")
+	builder.WriteString(u.Password)
 	builder.WriteByte(')')
 	return builder.String()
 }

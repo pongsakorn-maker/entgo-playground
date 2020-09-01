@@ -14,7 +14,7 @@ type Playlist struct {
 // Fields of the Playlist.
 func (Playlist) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("Playlist_ID"),
+		field.Int("playlist_id"),
 	}
 }
 

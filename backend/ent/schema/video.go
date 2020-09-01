@@ -14,7 +14,7 @@ type Video struct {
 // Fields of the Video.
 func (Video) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("Video_ID"),
+		field.Int("video_id"),
 	}
 }
 

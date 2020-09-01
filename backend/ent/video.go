@@ -16,8 +16,8 @@ type Video struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// VideoID holds the value of the "Video_ID" field.
-	VideoID int `json:"Video_ID,omitempty"`
+	// VideoID holds the value of the "video_id" field.
+	VideoID int `json:"video_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VideoQuery when eager-loading is set.
 	Edges   VideoEdges `json:"edges"`
@@ -62,7 +62,7 @@ func (e VideoEdges) OwnerOrErr() (*User, error) {
 func (*Video) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // Video_ID
+		&sql.NullInt64{}, // video_id
 	}
 }
 
@@ -86,7 +86,7 @@ func (v *Video) assignValues(values ...interface{}) error {
 	v.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field Video_ID", values[0])
+		return fmt.Errorf("unexpected type %T for field video_id", values[0])
 	} else if value.Valid {
 		v.VideoID = int(value.Int64)
 	}
@@ -135,7 +135,7 @@ func (v *Video) String() string {
 	var builder strings.Builder
 	builder.WriteString("Video(")
 	builder.WriteString(fmt.Sprintf("id=%v", v.ID))
-	builder.WriteString(", Video_ID=")
+	builder.WriteString(", video_id=")
 	builder.WriteString(fmt.Sprintf("%v", v.VideoID))
 	builder.WriteByte(')')
 	return builder.String()

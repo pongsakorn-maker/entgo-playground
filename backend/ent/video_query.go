@@ -302,7 +302,7 @@ func (vq *VideoQuery) WithOwner(opts ...func(*UserQuery)) *VideoQuery {
 // Example:
 //
 //	var v []struct {
-//		VideoID int `json:"Video_ID,omitempty"`
+//		VideoID int `json:"video_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -328,7 +328,7 @@ func (vq *VideoQuery) GroupBy(field string, fields ...string) *VideoGroupBy {
 // Example:
 //
 //	var v []struct {
-//		VideoID int `json:"Video_ID,omitempty"`
+//		VideoID int `json:"video_id,omitempty"`
 //	}
 //
 //	client.Video.Query().

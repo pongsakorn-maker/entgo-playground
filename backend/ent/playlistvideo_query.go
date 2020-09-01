@@ -332,7 +332,7 @@ func (pvq *PlaylistVideoQuery) WithResolution(opts ...func(*ResolutionQuery)) *P
 // Example:
 //
 //	var v []struct {
-//		PlaylistVideoID int `json:"PlaylistVideo_ID,omitempty"`
+//		PlaylistVideoID int `json:"playlistVideo_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -358,7 +358,7 @@ func (pvq *PlaylistVideoQuery) GroupBy(field string, fields ...string) *Playlist
 // Example:
 //
 //	var v []struct {
-//		PlaylistVideoID int `json:"PlaylistVideo_ID,omitempty"`
+//		PlaylistVideoID int `json:"playlistVideo_id,omitempty"`
 //	}
 //
 //	client.PlaylistVideo.Query().

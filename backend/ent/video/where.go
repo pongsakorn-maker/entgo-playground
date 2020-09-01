@@ -91,28 +91,28 @@ func IDLTE(id int) predicate.Video {
 	})
 }
 
-// VideoID applies equality check predicate on the "Video_ID" field. It's identical to VideoIDEQ.
+// VideoID applies equality check predicate on the "video_id" field. It's identical to VideoIDEQ.
 func VideoID(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDEQ applies the EQ predicate on the "Video_ID" field.
+// VideoIDEQ applies the EQ predicate on the "video_id" field.
 func VideoIDEQ(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDNEQ applies the NEQ predicate on the "Video_ID" field.
+// VideoIDNEQ applies the NEQ predicate on the "video_id" field.
 func VideoIDNEQ(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDIn applies the In predicate on the "Video_ID" field.
+// VideoIDIn applies the In predicate on the "video_id" field.
 func VideoIDIn(vs ...int) predicate.Video {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -129,7 +129,7 @@ func VideoIDIn(vs ...int) predicate.Video {
 	})
 }
 
-// VideoIDNotIn applies the NotIn predicate on the "Video_ID" field.
+// VideoIDNotIn applies the NotIn predicate on the "video_id" field.
 func VideoIDNotIn(vs ...int) predicate.Video {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -146,28 +146,28 @@ func VideoIDNotIn(vs ...int) predicate.Video {
 	})
 }
 
-// VideoIDGT applies the GT predicate on the "Video_ID" field.
+// VideoIDGT applies the GT predicate on the "video_id" field.
 func VideoIDGT(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDGTE applies the GTE predicate on the "Video_ID" field.
+// VideoIDGTE applies the GTE predicate on the "video_id" field.
 func VideoIDGTE(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDLT applies the LT predicate on the "Video_ID" field.
+// VideoIDLT applies the LT predicate on the "video_id" field.
 func VideoIDLT(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldVideoID), v))
 	})
 }
 
-// VideoIDLTE applies the LTE predicate on the "Video_ID" field.
+// VideoIDLTE applies the LTE predicate on the "video_id" field.
 func VideoIDLTE(v int) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldVideoID), v))

@@ -302,7 +302,7 @@ func (pq *PlaylistQuery) WithOwner(opts ...func(*UserQuery)) *PlaylistQuery {
 // Example:
 //
 //	var v []struct {
-//		PlaylistID int `json:"Playlist_ID,omitempty"`
+//		PlaylistID int `json:"playlist_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -328,7 +328,7 @@ func (pq *PlaylistQuery) GroupBy(field string, fields ...string) *PlaylistGroupB
 // Example:
 //
 //	var v []struct {
-//		PlaylistID int `json:"Playlist_ID,omitempty"`
+//		PlaylistID int `json:"playlist_id,omitempty"`
 //	}
 //
 //	client.Playlist.Query().

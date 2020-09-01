@@ -30,14 +30,14 @@ func (pvu *PlaylistVideoUpdate) Where(ps ...predicate.PlaylistVideo) *PlaylistVi
 	return pvu
 }
 
-// SetPlaylistVideoID sets the PlaylistVideo_ID field.
+// SetPlaylistVideoID sets the playlistVideo_id field.
 func (pvu *PlaylistVideoUpdate) SetPlaylistVideoID(i int) *PlaylistVideoUpdate {
 	pvu.mutation.ResetPlaylistVideoID()
 	pvu.mutation.SetPlaylistVideoID(i)
 	return pvu
 }
 
-// AddPlaylistVideoID adds i to PlaylistVideo_ID.
+// AddPlaylistVideoID adds i to playlistVideo_id.
 func (pvu *PlaylistVideoUpdate) AddPlaylistVideoID(i int) *PlaylistVideoUpdate {
 	pvu.mutation.AddPlaylistVideoID(i)
 	return pvu
@@ -330,14 +330,14 @@ type PlaylistVideoUpdateOne struct {
 	mutation *PlaylistVideoMutation
 }
 
-// SetPlaylistVideoID sets the PlaylistVideo_ID field.
+// SetPlaylistVideoID sets the playlistVideo_id field.
 func (pvuo *PlaylistVideoUpdateOne) SetPlaylistVideoID(i int) *PlaylistVideoUpdateOne {
 	pvuo.mutation.ResetPlaylistVideoID()
 	pvuo.mutation.SetPlaylistVideoID(i)
 	return pvuo
 }
 
-// AddPlaylistVideoID adds i to PlaylistVideo_ID.
+// AddPlaylistVideoID adds i to playlistVideo_id.
 func (pvuo *PlaylistVideoUpdateOne) AddPlaylistVideoID(i int) *PlaylistVideoUpdateOne {
 	pvuo.mutation.AddPlaylistVideoID(i)
 	return pvuo

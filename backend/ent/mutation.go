@@ -39,8 +39,8 @@ type PlaylistMutation struct {
 	op                     Op
 	typ                    string
 	id                     *int
-	_Playlist_ID           *int
-	add_Playlist_ID        *int
+	playlist_id            *int
+	addplaylist_id         *int
 	clearedFields          map[string]struct{}
 	playlist_videos        map[int]struct{}
 	removedplaylist_videos map[int]struct{}
@@ -129,22 +129,22 @@ func (m *PlaylistMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetPlaylistID sets the Playlist_ID field.
+// SetPlaylistID sets the playlist_id field.
 func (m *PlaylistMutation) SetPlaylistID(i int) {
-	m._Playlist_ID = &i
-	m.add_Playlist_ID = nil
+	m.playlist_id = &i
+	m.addplaylist_id = nil
 }
 
-// PlaylistID returns the Playlist_ID value in the mutation.
+// PlaylistID returns the playlist_id value in the mutation.
 func (m *PlaylistMutation) PlaylistID() (r int, exists bool) {
-	v := m._Playlist_ID
+	v := m.playlist_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPlaylistID returns the old Playlist_ID value of the Playlist.
+// OldPlaylistID returns the old playlist_id value of the Playlist.
 // If the Playlist object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
@@ -162,28 +162,28 @@ func (m *PlaylistMutation) OldPlaylistID(ctx context.Context) (v int, err error)
 	return oldValue.PlaylistID, nil
 }
 
-// AddPlaylistID adds i to Playlist_ID.
+// AddPlaylistID adds i to playlist_id.
 func (m *PlaylistMutation) AddPlaylistID(i int) {
-	if m.add_Playlist_ID != nil {
-		*m.add_Playlist_ID += i
+	if m.addplaylist_id != nil {
+		*m.addplaylist_id += i
 	} else {
-		m.add_Playlist_ID = &i
+		m.addplaylist_id = &i
 	}
 }
 
-// AddedPlaylistID returns the value that was added to the Playlist_ID field in this mutation.
+// AddedPlaylistID returns the value that was added to the playlist_id field in this mutation.
 func (m *PlaylistMutation) AddedPlaylistID() (r int, exists bool) {
-	v := m.add_Playlist_ID
+	v := m.addplaylist_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetPlaylistID reset all changes of the "Playlist_ID" field.
+// ResetPlaylistID reset all changes of the "playlist_id" field.
 func (m *PlaylistMutation) ResetPlaylistID() {
-	m._Playlist_ID = nil
-	m.add_Playlist_ID = nil
+	m.playlist_id = nil
+	m.addplaylist_id = nil
 }
 
 // AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
@@ -282,7 +282,7 @@ func (m *PlaylistMutation) Type() string {
 // fields that were in/decremented, call AddedFields().
 func (m *PlaylistMutation) Fields() []string {
 	fields := make([]string, 0, 1)
-	if m._Playlist_ID != nil {
+	if m.playlist_id != nil {
 		fields = append(fields, playlist.FieldPlaylistID)
 	}
 	return fields
@@ -330,7 +330,7 @@ func (m *PlaylistMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *PlaylistMutation) AddedFields() []string {
 	var fields []string
-	if m.add_Playlist_ID != nil {
+	if m.addplaylist_id != nil {
 		fields = append(fields, playlist.FieldPlaylistID)
 	}
 	return fields
@@ -499,20 +499,20 @@ func (m *PlaylistMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type PlaylistVideoMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int
-	_PlaylistVideo_ID    *int
-	add_PlaylistVideo_ID *int
-	clearedFields        map[string]struct{}
-	video                *int
-	clearedvideo         bool
-	playlists            *int
-	clearedplaylists     bool
-	resolution           *int
-	clearedresolution    bool
-	done                 bool
-	oldValue             func(context.Context) (*PlaylistVideo, error)
+	op                  Op
+	typ                 string
+	id                  *int
+	playlistVideo_id    *int
+	addplaylistVideo_id *int
+	clearedFields       map[string]struct{}
+	video               *int
+	clearedvideo        bool
+	playlists           *int
+	clearedplaylists    bool
+	resolution          *int
+	clearedresolution   bool
+	done                bool
+	oldValue            func(context.Context) (*PlaylistVideo, error)
 }
 
 var _ ent.Mutation = (*PlaylistVideoMutation)(nil)
@@ -594,22 +594,22 @@ func (m *PlaylistVideoMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetPlaylistVideoID sets the PlaylistVideo_ID field.
+// SetPlaylistVideoID sets the playlistVideo_id field.
 func (m *PlaylistVideoMutation) SetPlaylistVideoID(i int) {
-	m._PlaylistVideo_ID = &i
-	m.add_PlaylistVideo_ID = nil
+	m.playlistVideo_id = &i
+	m.addplaylistVideo_id = nil
 }
 
-// PlaylistVideoID returns the PlaylistVideo_ID value in the mutation.
+// PlaylistVideoID returns the playlistVideo_id value in the mutation.
 func (m *PlaylistVideoMutation) PlaylistVideoID() (r int, exists bool) {
-	v := m._PlaylistVideo_ID
+	v := m.playlistVideo_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPlaylistVideoID returns the old PlaylistVideo_ID value of the PlaylistVideo.
+// OldPlaylistVideoID returns the old playlistVideo_id value of the PlaylistVideo.
 // If the PlaylistVideo object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
@@ -627,28 +627,28 @@ func (m *PlaylistVideoMutation) OldPlaylistVideoID(ctx context.Context) (v int, 
 	return oldValue.PlaylistVideoID, nil
 }
 
-// AddPlaylistVideoID adds i to PlaylistVideo_ID.
+// AddPlaylistVideoID adds i to playlistVideo_id.
 func (m *PlaylistVideoMutation) AddPlaylistVideoID(i int) {
-	if m.add_PlaylistVideo_ID != nil {
-		*m.add_PlaylistVideo_ID += i
+	if m.addplaylistVideo_id != nil {
+		*m.addplaylistVideo_id += i
 	} else {
-		m.add_PlaylistVideo_ID = &i
+		m.addplaylistVideo_id = &i
 	}
 }
 
-// AddedPlaylistVideoID returns the value that was added to the PlaylistVideo_ID field in this mutation.
+// AddedPlaylistVideoID returns the value that was added to the playlistVideo_id field in this mutation.
 func (m *PlaylistVideoMutation) AddedPlaylistVideoID() (r int, exists bool) {
-	v := m.add_PlaylistVideo_ID
+	v := m.addplaylistVideo_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetPlaylistVideoID reset all changes of the "PlaylistVideo_ID" field.
+// ResetPlaylistVideoID reset all changes of the "playlistVideo_id" field.
 func (m *PlaylistVideoMutation) ResetPlaylistVideoID() {
-	m._PlaylistVideo_ID = nil
-	m.add_PlaylistVideo_ID = nil
+	m.playlistVideo_id = nil
+	m.addplaylistVideo_id = nil
 }
 
 // SetVideoID sets the video edge to Video by id.
@@ -783,7 +783,7 @@ func (m *PlaylistVideoMutation) Type() string {
 // fields that were in/decremented, call AddedFields().
 func (m *PlaylistVideoMutation) Fields() []string {
 	fields := make([]string, 0, 1)
-	if m._PlaylistVideo_ID != nil {
+	if m.playlistVideo_id != nil {
 		fields = append(fields, playlistvideo.FieldPlaylistVideoID)
 	}
 	return fields
@@ -831,7 +831,7 @@ func (m *PlaylistVideoMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *PlaylistVideoMutation) AddedFields() []string {
 	var fields []string
-	if m.add_PlaylistVideo_ID != nil {
+	if m.addplaylistVideo_id != nil {
 		fields = append(fields, playlistvideo.FieldPlaylistVideoID)
 	}
 	return fields
@@ -1018,8 +1018,8 @@ type ResolutionMutation struct {
 	op                     Op
 	typ                    string
 	id                     *int
-	_Resolution_ID         *int
-	add_Resolution_ID      *int
+	resolution_id          *int
+	addresolution_id       *int
 	clearedFields          map[string]struct{}
 	playlist_videos        map[int]struct{}
 	removedplaylist_videos map[int]struct{}
@@ -1106,22 +1106,22 @@ func (m *ResolutionMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetResolutionID sets the Resolution_ID field.
+// SetResolutionID sets the resolution_id field.
 func (m *ResolutionMutation) SetResolutionID(i int) {
-	m._Resolution_ID = &i
-	m.add_Resolution_ID = nil
+	m.resolution_id = &i
+	m.addresolution_id = nil
 }
 
-// ResolutionID returns the Resolution_ID value in the mutation.
+// ResolutionID returns the resolution_id value in the mutation.
 func (m *ResolutionMutation) ResolutionID() (r int, exists bool) {
-	v := m._Resolution_ID
+	v := m.resolution_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldResolutionID returns the old Resolution_ID value of the Resolution.
+// OldResolutionID returns the old resolution_id value of the Resolution.
 // If the Resolution object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
@@ -1139,28 +1139,28 @@ func (m *ResolutionMutation) OldResolutionID(ctx context.Context) (v int, err er
 	return oldValue.ResolutionID, nil
 }
 
-// AddResolutionID adds i to Resolution_ID.
+// AddResolutionID adds i to resolution_id.
 func (m *ResolutionMutation) AddResolutionID(i int) {
-	if m.add_Resolution_ID != nil {
-		*m.add_Resolution_ID += i
+	if m.addresolution_id != nil {
+		*m.addresolution_id += i
 	} else {
-		m.add_Resolution_ID = &i
+		m.addresolution_id = &i
 	}
 }
 
-// AddedResolutionID returns the value that was added to the Resolution_ID field in this mutation.
+// AddedResolutionID returns the value that was added to the resolution_id field in this mutation.
 func (m *ResolutionMutation) AddedResolutionID() (r int, exists bool) {
-	v := m.add_Resolution_ID
+	v := m.addresolution_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetResolutionID reset all changes of the "Resolution_ID" field.
+// ResetResolutionID reset all changes of the "resolution_id" field.
 func (m *ResolutionMutation) ResetResolutionID() {
-	m._Resolution_ID = nil
-	m.add_Resolution_ID = nil
+	m.resolution_id = nil
+	m.addresolution_id = nil
 }
 
 // AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
@@ -1220,7 +1220,7 @@ func (m *ResolutionMutation) Type() string {
 // fields that were in/decremented, call AddedFields().
 func (m *ResolutionMutation) Fields() []string {
 	fields := make([]string, 0, 1)
-	if m._Resolution_ID != nil {
+	if m.resolution_id != nil {
 		fields = append(fields, resolution.FieldResolutionID)
 	}
 	return fields
@@ -1268,7 +1268,7 @@ func (m *ResolutionMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *ResolutionMutation) AddedFields() []string {
 	var fields []string
-	if m.add_Resolution_ID != nil {
+	if m.addresolution_id != nil {
 		fields = append(fields, resolution.FieldResolutionID)
 	}
 	return fields
@@ -1422,8 +1422,10 @@ type UserMutation struct {
 	op               Op
 	typ              string
 	id               *int
-	_User_ID         *int
-	add_User_ID      *int
+	user_id          *int
+	adduser_id       *int
+	username         *string
+	password         *string
 	clearedFields    map[string]struct{}
 	playlists        map[int]struct{}
 	removedplaylists map[int]struct{}
@@ -1512,22 +1514,22 @@ func (m *UserMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetUserID sets the User_ID field.
+// SetUserID sets the user_id field.
 func (m *UserMutation) SetUserID(i int) {
-	m._User_ID = &i
-	m.add_User_ID = nil
+	m.user_id = &i
+	m.adduser_id = nil
 }
 
-// UserID returns the User_ID value in the mutation.
+// UserID returns the user_id value in the mutation.
 func (m *UserMutation) UserID() (r int, exists bool) {
-	v := m._User_ID
+	v := m.user_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUserID returns the old User_ID value of the User.
+// OldUserID returns the old user_id value of the User.
 // If the User object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
@@ -1545,28 +1547,102 @@ func (m *UserMutation) OldUserID(ctx context.Context) (v int, err error) {
 	return oldValue.UserID, nil
 }
 
-// AddUserID adds i to User_ID.
+// AddUserID adds i to user_id.
 func (m *UserMutation) AddUserID(i int) {
-	if m.add_User_ID != nil {
-		*m.add_User_ID += i
+	if m.adduser_id != nil {
+		*m.adduser_id += i
 	} else {
-		m.add_User_ID = &i
+		m.adduser_id = &i
 	}
 }
 
-// AddedUserID returns the value that was added to the User_ID field in this mutation.
+// AddedUserID returns the value that was added to the user_id field in this mutation.
 func (m *UserMutation) AddedUserID() (r int, exists bool) {
-	v := m.add_User_ID
+	v := m.adduser_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetUserID reset all changes of the "User_ID" field.
+// ResetUserID reset all changes of the "user_id" field.
 func (m *UserMutation) ResetUserID() {
-	m._User_ID = nil
-	m.add_User_ID = nil
+	m.user_id = nil
+	m.adduser_id = nil
+}
+
+// SetUsername sets the username field.
+func (m *UserMutation) SetUsername(s string) {
+	m.username = &s
+}
+
+// Username returns the username value in the mutation.
+func (m *UserMutation) Username() (r string, exists bool) {
+	v := m.username
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsername returns the old username value of the User.
+// If the User object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UserMutation) OldUsername(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUsername is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUsername requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsername: %w", err)
+	}
+	return oldValue.Username, nil
+}
+
+// ResetUsername reset all changes of the "username" field.
+func (m *UserMutation) ResetUsername() {
+	m.username = nil
+}
+
+// SetPassword sets the password field.
+func (m *UserMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the password value in the mutation.
+func (m *UserMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old password value of the User.
+// If the User object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UserMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPassword is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ResetPassword reset all changes of the "password" field.
+func (m *UserMutation) ResetPassword() {
+	m.password = nil
 }
 
 // AddPlaylistIDs adds the playlists edge to Playlist by ids.
@@ -1667,9 +1743,15 @@ func (m *UserMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 1)
-	if m._User_ID != nil {
+	fields := make([]string, 0, 3)
+	if m.user_id != nil {
 		fields = append(fields, user.FieldUserID)
+	}
+	if m.username != nil {
+		fields = append(fields, user.FieldUsername)
+	}
+	if m.password != nil {
+		fields = append(fields, user.FieldPassword)
 	}
 	return fields
 }
@@ -1681,6 +1763,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldUserID:
 		return m.UserID()
+	case user.FieldUsername:
+		return m.Username()
+	case user.FieldPassword:
+		return m.Password()
 	}
 	return nil, false
 }
@@ -1692,6 +1778,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldUserID:
 		return m.OldUserID(ctx)
+	case user.FieldUsername:
+		return m.OldUsername(ctx)
+	case user.FieldPassword:
+		return m.OldPassword(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -1708,6 +1798,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
+	case user.FieldUsername:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsername(v)
+		return nil
+	case user.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -1716,7 +1820,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *UserMutation) AddedFields() []string {
 	var fields []string
-	if m.add_User_ID != nil {
+	if m.adduser_id != nil {
 		fields = append(fields, user.FieldUserID)
 	}
 	return fields
@@ -1775,6 +1879,12 @@ func (m *UserMutation) ResetField(name string) error {
 	switch name {
 	case user.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case user.FieldUsername:
+		m.ResetUsername()
+		return nil
+	case user.FieldPassword:
+		m.ResetPassword()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -1891,8 +2001,8 @@ type VideoMutation struct {
 	op                     Op
 	typ                    string
 	id                     *int
-	_Video_ID              *int
-	add_Video_ID           *int
+	video_id               *int
+	addvideo_id            *int
 	clearedFields          map[string]struct{}
 	playlist_videos        map[int]struct{}
 	removedplaylist_videos map[int]struct{}
@@ -1981,22 +2091,22 @@ func (m *VideoMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetVideoID sets the Video_ID field.
+// SetVideoID sets the video_id field.
 func (m *VideoMutation) SetVideoID(i int) {
-	m._Video_ID = &i
-	m.add_Video_ID = nil
+	m.video_id = &i
+	m.addvideo_id = nil
 }
 
-// VideoID returns the Video_ID value in the mutation.
+// VideoID returns the video_id value in the mutation.
 func (m *VideoMutation) VideoID() (r int, exists bool) {
-	v := m._Video_ID
+	v := m.video_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldVideoID returns the old Video_ID value of the Video.
+// OldVideoID returns the old video_id value of the Video.
 // If the Video object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
@@ -2014,28 +2124,28 @@ func (m *VideoMutation) OldVideoID(ctx context.Context) (v int, err error) {
 	return oldValue.VideoID, nil
 }
 
-// AddVideoID adds i to Video_ID.
+// AddVideoID adds i to video_id.
 func (m *VideoMutation) AddVideoID(i int) {
-	if m.add_Video_ID != nil {
-		*m.add_Video_ID += i
+	if m.addvideo_id != nil {
+		*m.addvideo_id += i
 	} else {
-		m.add_Video_ID = &i
+		m.addvideo_id = &i
 	}
 }
 
-// AddedVideoID returns the value that was added to the Video_ID field in this mutation.
+// AddedVideoID returns the value that was added to the video_id field in this mutation.
 func (m *VideoMutation) AddedVideoID() (r int, exists bool) {
-	v := m.add_Video_ID
+	v := m.addvideo_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetVideoID reset all changes of the "Video_ID" field.
+// ResetVideoID reset all changes of the "video_id" field.
 func (m *VideoMutation) ResetVideoID() {
-	m._Video_ID = nil
-	m.add_Video_ID = nil
+	m.video_id = nil
+	m.addvideo_id = nil
 }
 
 // AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
@@ -2134,7 +2244,7 @@ func (m *VideoMutation) Type() string {
 // fields that were in/decremented, call AddedFields().
 func (m *VideoMutation) Fields() []string {
 	fields := make([]string, 0, 1)
-	if m._Video_ID != nil {
+	if m.video_id != nil {
 		fields = append(fields, video.FieldVideoID)
 	}
 	return fields
@@ -2182,7 +2292,7 @@ func (m *VideoMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *VideoMutation) AddedFields() []string {
 	var fields []string
-	if m.add_Video_ID != nil {
+	if m.addvideo_id != nil {
 		fields = append(fields, video.FieldVideoID)
 	}
 	return fields

@@ -91,28 +91,28 @@ func IDLTE(id int) predicate.Resolution {
 	})
 }
 
-// ResolutionID applies equality check predicate on the "Resolution_ID" field. It's identical to ResolutionIDEQ.
+// ResolutionID applies equality check predicate on the "resolution_id" field. It's identical to ResolutionIDEQ.
 func ResolutionID(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDEQ applies the EQ predicate on the "Resolution_ID" field.
+// ResolutionIDEQ applies the EQ predicate on the "resolution_id" field.
 func ResolutionIDEQ(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDNEQ applies the NEQ predicate on the "Resolution_ID" field.
+// ResolutionIDNEQ applies the NEQ predicate on the "resolution_id" field.
 func ResolutionIDNEQ(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDIn applies the In predicate on the "Resolution_ID" field.
+// ResolutionIDIn applies the In predicate on the "resolution_id" field.
 func ResolutionIDIn(vs ...int) predicate.Resolution {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -129,7 +129,7 @@ func ResolutionIDIn(vs ...int) predicate.Resolution {
 	})
 }
 
-// ResolutionIDNotIn applies the NotIn predicate on the "Resolution_ID" field.
+// ResolutionIDNotIn applies the NotIn predicate on the "resolution_id" field.
 func ResolutionIDNotIn(vs ...int) predicate.Resolution {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -146,28 +146,28 @@ func ResolutionIDNotIn(vs ...int) predicate.Resolution {
 	})
 }
 
-// ResolutionIDGT applies the GT predicate on the "Resolution_ID" field.
+// ResolutionIDGT applies the GT predicate on the "resolution_id" field.
 func ResolutionIDGT(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDGTE applies the GTE predicate on the "Resolution_ID" field.
+// ResolutionIDGTE applies the GTE predicate on the "resolution_id" field.
 func ResolutionIDGTE(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDLT applies the LT predicate on the "Resolution_ID" field.
+// ResolutionIDLT applies the LT predicate on the "resolution_id" field.
 func ResolutionIDLT(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldResolutionID), v))
 	})
 }
 
-// ResolutionIDLTE applies the LTE predicate on the "Resolution_ID" field.
+// ResolutionIDLTE applies the LTE predicate on the "resolution_id" field.
 func ResolutionIDLTE(v int) predicate.Resolution {
 	return predicate.Resolution(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldResolutionID), v))

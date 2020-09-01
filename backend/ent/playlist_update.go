@@ -29,14 +29,14 @@ func (pu *PlaylistUpdate) Where(ps ...predicate.Playlist) *PlaylistUpdate {
 	return pu
 }
 
-// SetPlaylistID sets the Playlist_ID field.
+// SetPlaylistID sets the playlist_id field.
 func (pu *PlaylistUpdate) SetPlaylistID(i int) *PlaylistUpdate {
 	pu.mutation.ResetPlaylistID()
 	pu.mutation.SetPlaylistID(i)
 	return pu
 }
 
-// AddPlaylistID adds i to Playlist_ID.
+// AddPlaylistID adds i to playlist_id.
 func (pu *PlaylistUpdate) AddPlaylistID(i int) *PlaylistUpdate {
 	pu.mutation.AddPlaylistID(i)
 	return pu
@@ -277,14 +277,14 @@ type PlaylistUpdateOne struct {
 	mutation *PlaylistMutation
 }
 
-// SetPlaylistID sets the Playlist_ID field.
+// SetPlaylistID sets the playlist_id field.
 func (puo *PlaylistUpdateOne) SetPlaylistID(i int) *PlaylistUpdateOne {
 	puo.mutation.ResetPlaylistID()
 	puo.mutation.SetPlaylistID(i)
 	return puo
 }
 
-// AddPlaylistID adds i to Playlist_ID.
+// AddPlaylistID adds i to playlist_id.
 func (puo *PlaylistUpdateOne) AddPlaylistID(i int) *PlaylistUpdateOne {
 	puo.mutation.AddPlaylistID(i)
 	return puo

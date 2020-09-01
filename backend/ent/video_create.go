@@ -21,7 +21,7 @@ type VideoCreate struct {
 	hooks    []Hook
 }
 
-// SetVideoID sets the Video_ID field.
+// SetVideoID sets the video_id field.
 func (vc *VideoCreate) SetVideoID(i int) *VideoCreate {
 	vc.mutation.SetVideoID(i)
 	return vc
@@ -109,7 +109,7 @@ func (vc *VideoCreate) SaveX(ctx context.Context) *Video {
 
 func (vc *VideoCreate) preSave() error {
 	if _, ok := vc.mutation.VideoID(); !ok {
-		return &ValidationError{Name: "Video_ID", err: errors.New("ent: missing required field \"Video_ID\"")}
+		return &ValidationError{Name: "video_id", err: errors.New("ent: missing required field \"video_id\"")}
 	}
 	return nil
 }

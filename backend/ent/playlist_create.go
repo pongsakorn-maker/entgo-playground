@@ -21,7 +21,7 @@ type PlaylistCreate struct {
 	hooks    []Hook
 }
 
-// SetPlaylistID sets the Playlist_ID field.
+// SetPlaylistID sets the playlist_id field.
 func (pc *PlaylistCreate) SetPlaylistID(i int) *PlaylistCreate {
 	pc.mutation.SetPlaylistID(i)
 	return pc
@@ -109,7 +109,7 @@ func (pc *PlaylistCreate) SaveX(ctx context.Context) *Playlist {
 
 func (pc *PlaylistCreate) preSave() error {
 	if _, ok := pc.mutation.PlaylistID(); !ok {
-		return &ValidationError{Name: "Playlist_ID", err: errors.New("ent: missing required field \"Playlist_ID\"")}
+		return &ValidationError{Name: "playlist_id", err: errors.New("ent: missing required field \"playlist_id\"")}
 	}
 	return nil
 }

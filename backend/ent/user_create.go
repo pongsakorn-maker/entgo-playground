@@ -21,9 +21,21 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetUserID sets the User_ID field.
+// SetUserID sets the user_id field.
 func (uc *UserCreate) SetUserID(i int) *UserCreate {
 	uc.mutation.SetUserID(i)
+	return uc
+}
+
+// SetUsername sets the username field.
+func (uc *UserCreate) SetUsername(s string) *UserCreate {
+	uc.mutation.SetUsername(s)
+	return uc
+}
+
+// SetPassword sets the password field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.mutation.SetPassword(s)
 	return uc
 }
 
@@ -105,7 +117,13 @@ func (uc *UserCreate) SaveX(ctx context.Context) *User {
 
 func (uc *UserCreate) preSave() error {
 	if _, ok := uc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "User_ID", err: errors.New("ent: missing required field \"User_ID\"")}
+		return &ValidationError{Name: "user_id", err: errors.New("ent: missing required field \"user_id\"")}
+	}
+	if _, ok := uc.mutation.Username(); !ok {
+		return &ValidationError{Name: "username", err: errors.New("ent: missing required field \"username\"")}
+	}
+	if _, ok := uc.mutation.Password(); !ok {
+		return &ValidationError{Name: "password", err: errors.New("ent: missing required field \"password\"")}
 	}
 	return nil
 }
@@ -141,6 +159,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldUserID,
 		})
 		u.UserID = value
+	}
+	if value, ok := uc.mutation.Username(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldUsername,
+		})
+		u.Username = value
+	}
+	if value, ok := uc.mutation.Password(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPassword,
+		})
+		u.Password = value
 	}
 	if nodes := uc.mutation.PlaylistsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

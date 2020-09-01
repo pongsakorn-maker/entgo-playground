@@ -28,14 +28,14 @@ func (ru *ResolutionUpdate) Where(ps ...predicate.Resolution) *ResolutionUpdate 
 	return ru
 }
 
-// SetResolutionID sets the Resolution_ID field.
+// SetResolutionID sets the resolution_id field.
 func (ru *ResolutionUpdate) SetResolutionID(i int) *ResolutionUpdate {
 	ru.mutation.ResetResolutionID()
 	ru.mutation.SetResolutionID(i)
 	return ru
 }
 
-// AddResolutionID adds i to Resolution_ID.
+// AddResolutionID adds i to resolution_id.
 func (ru *ResolutionUpdate) AddResolutionID(i int) *ResolutionUpdate {
 	ru.mutation.AddResolutionID(i)
 	return ru
@@ -216,14 +216,14 @@ type ResolutionUpdateOne struct {
 	mutation *ResolutionMutation
 }
 
-// SetResolutionID sets the Resolution_ID field.
+// SetResolutionID sets the resolution_id field.
 func (ruo *ResolutionUpdateOne) SetResolutionID(i int) *ResolutionUpdateOne {
 	ruo.mutation.ResetResolutionID()
 	ruo.mutation.SetResolutionID(i)
 	return ruo
 }
 
-// AddResolutionID adds i to Resolution_ID.
+// AddResolutionID adds i to resolution_id.
 func (ruo *ResolutionUpdateOne) AddResolutionID(i int) *ResolutionUpdateOne {
 	ruo.mutation.AddResolutionID(i)
 	return ruo

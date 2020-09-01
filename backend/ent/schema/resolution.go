@@ -14,7 +14,7 @@ type Resolution struct {
 // Fields of the Resolution.
 func (Resolution) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("Resolution_ID"),
+		field.Int("resolution_id"),
 	}
 }
 

@@ -18,8 +18,8 @@ type PlaylistVideo struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// PlaylistVideoID holds the value of the "PlaylistVideo_ID" field.
-	PlaylistVideoID int `json:"PlaylistVideo_ID,omitempty"`
+	// PlaylistVideoID holds the value of the "playlistVideo_id" field.
+	PlaylistVideoID int `json:"playlistVideo_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlaylistVideoQuery when eager-loading is set.
 	Edges         PlaylistVideoEdges `json:"edges"`
@@ -87,7 +87,7 @@ func (e PlaylistVideoEdges) ResolutionOrErr() (*Resolution, error) {
 func (*PlaylistVideo) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // PlaylistVideo_ID
+		&sql.NullInt64{}, // playlistVideo_id
 	}
 }
 
@@ -113,7 +113,7 @@ func (pv *PlaylistVideo) assignValues(values ...interface{}) error {
 	pv.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field PlaylistVideo_ID", values[0])
+		return fmt.Errorf("unexpected type %T for field playlistVideo_id", values[0])
 	} else if value.Valid {
 		pv.PlaylistVideoID = int(value.Int64)
 	}
@@ -179,7 +179,7 @@ func (pv *PlaylistVideo) String() string {
 	var builder strings.Builder
 	builder.WriteString("PlaylistVideo(")
 	builder.WriteString(fmt.Sprintf("id=%v", pv.ID))
-	builder.WriteString(", PlaylistVideo_ID=")
+	builder.WriteString(", playlistVideo_id=")
 	builder.WriteString(fmt.Sprintf("%v", pv.PlaylistVideoID))
 	builder.WriteByte(')')
 	return builder.String()

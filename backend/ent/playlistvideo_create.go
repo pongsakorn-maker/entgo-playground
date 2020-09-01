@@ -22,7 +22,7 @@ type PlaylistVideoCreate struct {
 	hooks    []Hook
 }
 
-// SetPlaylistVideoID sets the PlaylistVideo_ID field.
+// SetPlaylistVideoID sets the playlistVideo_id field.
 func (pvc *PlaylistVideoCreate) SetPlaylistVideoID(i int) *PlaylistVideoCreate {
 	pvc.mutation.SetPlaylistVideoID(i)
 	return pvc
@@ -133,7 +133,7 @@ func (pvc *PlaylistVideoCreate) SaveX(ctx context.Context) *PlaylistVideo {
 
 func (pvc *PlaylistVideoCreate) preSave() error {
 	if _, ok := pvc.mutation.PlaylistVideoID(); !ok {
-		return &ValidationError{Name: "PlaylistVideo_ID", err: errors.New("ent: missing required field \"PlaylistVideo_ID\"")}
+		return &ValidationError{Name: "playlistVideo_id", err: errors.New("ent: missing required field \"playlistVideo_id\"")}
 	}
 	return nil
 }

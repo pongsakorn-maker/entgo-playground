@@ -91,28 +91,28 @@ func IDLTE(id int) predicate.Playlist {
 	})
 }
 
-// PlaylistID applies equality check predicate on the "Playlist_ID" field. It's identical to PlaylistIDEQ.
+// PlaylistID applies equality check predicate on the "playlist_id" field. It's identical to PlaylistIDEQ.
 func PlaylistID(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDEQ applies the EQ predicate on the "Playlist_ID" field.
+// PlaylistIDEQ applies the EQ predicate on the "playlist_id" field.
 func PlaylistIDEQ(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDNEQ applies the NEQ predicate on the "Playlist_ID" field.
+// PlaylistIDNEQ applies the NEQ predicate on the "playlist_id" field.
 func PlaylistIDNEQ(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDIn applies the In predicate on the "Playlist_ID" field.
+// PlaylistIDIn applies the In predicate on the "playlist_id" field.
 func PlaylistIDIn(vs ...int) predicate.Playlist {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -129,7 +129,7 @@ func PlaylistIDIn(vs ...int) predicate.Playlist {
 	})
 }
 
-// PlaylistIDNotIn applies the NotIn predicate on the "Playlist_ID" field.
+// PlaylistIDNotIn applies the NotIn predicate on the "playlist_id" field.
 func PlaylistIDNotIn(vs ...int) predicate.Playlist {
 	v := make([]interface{}, len(vs))
 	for i := range v {
@@ -146,28 +146,28 @@ func PlaylistIDNotIn(vs ...int) predicate.Playlist {
 	})
 }
 
-// PlaylistIDGT applies the GT predicate on the "Playlist_ID" field.
+// PlaylistIDGT applies the GT predicate on the "playlist_id" field.
 func PlaylistIDGT(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDGTE applies the GTE predicate on the "Playlist_ID" field.
+// PlaylistIDGTE applies the GTE predicate on the "playlist_id" field.
 func PlaylistIDGTE(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDLT applies the LT predicate on the "Playlist_ID" field.
+// PlaylistIDLT applies the LT predicate on the "playlist_id" field.
 func PlaylistIDLT(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldPlaylistID), v))
 	})
 }
 
-// PlaylistIDLTE applies the LTE predicate on the "Playlist_ID" field.
+// PlaylistIDLTE applies the LTE predicate on the "playlist_id" field.
 func PlaylistIDLTE(v int) predicate.Playlist {
 	return predicate.Playlist(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldPlaylistID), v))

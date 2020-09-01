@@ -29,14 +29,14 @@ func (vu *VideoUpdate) Where(ps ...predicate.Video) *VideoUpdate {
 	return vu
 }
 
-// SetVideoID sets the Video_ID field.
+// SetVideoID sets the video_id field.
 func (vu *VideoUpdate) SetVideoID(i int) *VideoUpdate {
 	vu.mutation.ResetVideoID()
 	vu.mutation.SetVideoID(i)
 	return vu
 }
 
-// AddVideoID adds i to Video_ID.
+// AddVideoID adds i to video_id.
 func (vu *VideoUpdate) AddVideoID(i int) *VideoUpdate {
 	vu.mutation.AddVideoID(i)
 	return vu
@@ -277,14 +277,14 @@ type VideoUpdateOne struct {
 	mutation *VideoMutation
 }
 
-// SetVideoID sets the Video_ID field.
+// SetVideoID sets the video_id field.
 func (vuo *VideoUpdateOne) SetVideoID(i int) *VideoUpdateOne {
 	vuo.mutation.ResetVideoID()
 	vuo.mutation.SetVideoID(i)
 	return vuo
 }
 
-// AddVideoID adds i to Video_ID.
+// AddVideoID adds i to video_id.
 func (vuo *VideoUpdateOne) AddVideoID(i int) *VideoUpdateOne {
 	vuo.mutation.AddVideoID(i)
 	return vuo

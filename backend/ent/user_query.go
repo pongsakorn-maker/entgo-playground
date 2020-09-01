@@ -301,7 +301,7 @@ func (uq *UserQuery) WithVideos(opts ...func(*VideoQuery)) *UserQuery {
 // Example:
 //
 //	var v []struct {
-//		UserID int `json:"User_ID,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -327,7 +327,7 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		UserID int `json:"User_ID,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.User.Query().

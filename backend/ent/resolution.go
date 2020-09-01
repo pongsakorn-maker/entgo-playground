@@ -15,8 +15,8 @@ type Resolution struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// ResolutionID holds the value of the "Resolution_ID" field.
-	ResolutionID int `json:"Resolution_ID,omitempty"`
+	// ResolutionID holds the value of the "resolution_id" field.
+	ResolutionID int `json:"resolution_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ResolutionQuery when eager-loading is set.
 	Edges ResolutionEdges `json:"edges"`
@@ -44,7 +44,7 @@ func (e ResolutionEdges) PlaylistVideosOrErr() ([]*PlaylistVideo, error) {
 func (*Resolution) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // Resolution_ID
+		&sql.NullInt64{}, // resolution_id
 	}
 }
 
@@ -61,7 +61,7 @@ func (r *Resolution) assignValues(values ...interface{}) error {
 	r.ID = int(value.Int64)
 	values = values[1:]
 	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field Resolution_ID", values[0])
+		return fmt.Errorf("unexpected type %T for field resolution_id", values[0])
 	} else if value.Valid {
 		r.ResolutionID = int(value.Int64)
 	}
@@ -96,7 +96,7 @@ func (r *Resolution) String() string {
 	var builder strings.Builder
 	builder.WriteString("Resolution(")
 	builder.WriteString(fmt.Sprintf("id=%v", r.ID))
-	builder.WriteString(", Resolution_ID=")
+	builder.WriteString(", resolution_id=")
 	builder.WriteString(fmt.Sprintf("%v", r.ResolutionID))
 	builder.WriteByte(')')
 	return builder.String()

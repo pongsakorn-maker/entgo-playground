@@ -9,6 +9,10 @@ const (
 	FieldID = "id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldUsername holds the string denoting the username field in the database.
+	FieldUsername = "username"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
 
 	// EdgePlaylists holds the string denoting the playlists edge name in mutations.
 	EdgePlaylists = "playlists"
@@ -37,4 +41,6 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldUserID,
+	FieldUsername,
+	FieldPassword,
 }

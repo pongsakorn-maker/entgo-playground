@@ -20,7 +20,7 @@ type ResolutionCreate struct {
 	hooks    []Hook
 }
 
-// SetResolutionID sets the Resolution_ID field.
+// SetResolutionID sets the resolution_id field.
 func (rc *ResolutionCreate) SetResolutionID(i int) *ResolutionCreate {
 	rc.mutation.SetResolutionID(i)
 	return rc
@@ -89,7 +89,7 @@ func (rc *ResolutionCreate) SaveX(ctx context.Context) *Resolution {
 
 func (rc *ResolutionCreate) preSave() error {
 	if _, ok := rc.mutation.ResolutionID(); !ok {
-		return &ValidationError{Name: "Resolution_ID", err: errors.New("ent: missing required field \"Resolution_ID\"")}
+		return &ValidationError{Name: "resolution_id", err: errors.New("ent: missing required field \"resolution_id\"")}
 	}
 	return nil
 }

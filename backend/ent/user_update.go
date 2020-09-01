@@ -29,16 +29,28 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetUserID sets the User_ID field.
+// SetUserID sets the user_id field.
 func (uu *UserUpdate) SetUserID(i int) *UserUpdate {
 	uu.mutation.ResetUserID()
 	uu.mutation.SetUserID(i)
 	return uu
 }
 
-// AddUserID adds i to User_ID.
+// AddUserID adds i to user_id.
 func (uu *UserUpdate) AddUserID(i int) *UserUpdate {
 	uu.mutation.AddUserID(i)
+	return uu
+}
+
+// SetUsername sets the username field.
+func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
+	uu.mutation.SetUsername(s)
+	return uu
+}
+
+// SetPassword sets the password field.
+func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
+	uu.mutation.SetPassword(s)
 	return uu
 }
 
@@ -191,6 +203,20 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldUserID,
 		})
 	}
+	if value, ok := uu.mutation.Username(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldUsername,
+		})
+	}
+	if value, ok := uu.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPassword,
+		})
+	}
 	if nodes := uu.mutation.RemovedPlaylistsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -285,16 +311,28 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
-// SetUserID sets the User_ID field.
+// SetUserID sets the user_id field.
 func (uuo *UserUpdateOne) SetUserID(i int) *UserUpdateOne {
 	uuo.mutation.ResetUserID()
 	uuo.mutation.SetUserID(i)
 	return uuo
 }
 
-// AddUserID adds i to User_ID.
+// AddUserID adds i to user_id.
 func (uuo *UserUpdateOne) AddUserID(i int) *UserUpdateOne {
 	uuo.mutation.AddUserID(i)
+	return uuo
+}
+
+// SetUsername sets the username field.
+func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
+	uuo.mutation.SetUsername(s)
+	return uuo
+}
+
+// SetPassword sets the password field.
+func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
+	uuo.mutation.SetPassword(s)
 	return uuo
 }
 
@@ -443,6 +481,20 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: user.FieldUserID,
+		})
+	}
+	if value, ok := uuo.mutation.Username(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldUsername,
+		})
+	}
+	if value, ok := uuo.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldPassword,
 		})
 	}
 	if nodes := uuo.mutation.RemovedPlaylistsIDs(); len(nodes) > 0 {
