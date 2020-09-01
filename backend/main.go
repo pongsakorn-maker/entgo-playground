@@ -7,7 +7,11 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pongsakorn-maker/entgo-playground/controllers"
+	_ "github.com/pongsakorn-maker/entgo-playground/docs"
 	"github.com/pongsakorn-maker/entgo-playground/ent"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title SUT SA Example API
@@ -64,9 +68,9 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// v1 := router.Group("/api/v1")
-	// controllers.NewUserController(v1, client)
+	v1 := router.Group("/api/v1")
+	controllers.NewUserController(v1, client)
 
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	// router.Run()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.Run()
 }

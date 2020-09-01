@@ -16,8 +16,8 @@ type Video struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// VideoID holds the value of the "video_id" field.
-	VideoID int `json:"video_id,omitempty"`
+	// VideoTitle holds the value of the "video_title" field.
+	VideoTitle string `json:"video_title,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VideoQuery when eager-loading is set.
 	Edges   VideoEdges `json:"edges"`
@@ -61,8 +61,8 @@ func (e VideoEdges) OwnerOrErr() (*User, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Video) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // video_id
+		&sql.NullInt64{},  // id
+		&sql.NullString{}, // video_title
 	}
 }
 
@@ -85,10 +85,10 @@ func (v *Video) assignValues(values ...interface{}) error {
 	}
 	v.ID = int(value.Int64)
 	values = values[1:]
-	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field video_id", values[0])
+	if value, ok := values[0].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field video_title", values[0])
 	} else if value.Valid {
-		v.VideoID = int(value.Int64)
+		v.VideoTitle = value.String
 	}
 	values = values[1:]
 	if len(values) == len(video.ForeignKeys) {
@@ -135,8 +135,8 @@ func (v *Video) String() string {
 	var builder strings.Builder
 	builder.WriteString("Video(")
 	builder.WriteString(fmt.Sprintf("id=%v", v.ID))
-	builder.WriteString(", video_id=")
-	builder.WriteString(fmt.Sprintf("%v", v.VideoID))
+	builder.WriteString(", video_title=")
+	builder.WriteString(v.VideoTitle)
 	builder.WriteByte(')')
 	return builder.String()
 }

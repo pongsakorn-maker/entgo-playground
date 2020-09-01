@@ -11,7 +11,6 @@ var (
 	// PlaylistsColumns holds the columns for the "playlists" table.
 	PlaylistsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "playlist_id", Type: field.TypeInt},
 		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PlaylistsTable holds the schema information for the "playlists" table.
@@ -22,7 +21,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "playlists_users_playlists",
-				Columns: []*schema.Column{PlaylistsColumns[2]},
+				Columns: []*schema.Column{PlaylistsColumns[1]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -32,7 +31,6 @@ var (
 	// PlaylistVideosColumns holds the columns for the "playlist_videos" table.
 	PlaylistVideosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "playlist_video_id", Type: field.TypeInt},
 		{Name: "playlist_id", Type: field.TypeInt, Nullable: true},
 		{Name: "resolution_id", Type: field.TypeInt, Nullable: true},
 		{Name: "video_id", Type: field.TypeInt, Nullable: true},
@@ -45,21 +43,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "playlist_videos_playlists_playlist_videos",
-				Columns: []*schema.Column{PlaylistVideosColumns[2]},
+				Columns: []*schema.Column{PlaylistVideosColumns[1]},
 
 				RefColumns: []*schema.Column{PlaylistsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "playlist_videos_resolutions_playlist_videos",
-				Columns: []*schema.Column{PlaylistVideosColumns[3]},
+				Columns: []*schema.Column{PlaylistVideosColumns[2]},
 
 				RefColumns: []*schema.Column{ResolutionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "playlist_videos_videos_playlist_videos",
-				Columns: []*schema.Column{PlaylistVideosColumns[4]},
+				Columns: []*schema.Column{PlaylistVideosColumns[3]},
 
 				RefColumns: []*schema.Column{VideosColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -69,7 +67,7 @@ var (
 	// ResolutionsColumns holds the columns for the "resolutions" table.
 	ResolutionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "resolution_id", Type: field.TypeInt},
+		{Name: "resolution", Type: field.TypeString},
 	}
 	// ResolutionsTable holds the schema information for the "resolutions" table.
 	ResolutionsTable = &schema.Table{
@@ -81,9 +79,10 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "user_id", Type: field.TypeInt},
-		{Name: "username", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString},
 		{Name: "password", Type: field.TypeString},
+		{Name: "age", Type: field.TypeInt},
+		{Name: "name", Type: field.TypeString},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -95,7 +94,7 @@ var (
 	// VideosColumns holds the columns for the "videos" table.
 	VideosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "video_id", Type: field.TypeInt},
+		{Name: "video_title", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// VideosTable holds the schema information for the "videos" table.

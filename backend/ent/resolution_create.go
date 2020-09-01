@@ -20,9 +20,9 @@ type ResolutionCreate struct {
 	hooks    []Hook
 }
 
-// SetResolutionID sets the resolution_id field.
-func (rc *ResolutionCreate) SetResolutionID(i int) *ResolutionCreate {
-	rc.mutation.SetResolutionID(i)
+// SetResolution sets the resolution field.
+func (rc *ResolutionCreate) SetResolution(s string) *ResolutionCreate {
+	rc.mutation.SetResolution(s)
 	return rc
 }
 
@@ -88,8 +88,13 @@ func (rc *ResolutionCreate) SaveX(ctx context.Context) *Resolution {
 }
 
 func (rc *ResolutionCreate) preSave() error {
-	if _, ok := rc.mutation.ResolutionID(); !ok {
-		return &ValidationError{Name: "resolution_id", err: errors.New("ent: missing required field \"resolution_id\"")}
+	if _, ok := rc.mutation.Resolution(); !ok {
+		return &ValidationError{Name: "resolution", err: errors.New("ent: missing required field \"resolution\"")}
+	}
+	if v, ok := rc.mutation.Resolution(); ok {
+		if err := resolution.ResolutionValidator(v); err != nil {
+			return &ValidationError{Name: "resolution", err: fmt.Errorf("ent: validator failed for field \"resolution\": %w", err)}
+		}
 	}
 	return nil
 }
@@ -118,13 +123,13 @@ func (rc *ResolutionCreate) createSpec() (*Resolution, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if value, ok := rc.mutation.ResolutionID(); ok {
+	if value, ok := rc.mutation.Resolution(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: resolution.FieldResolutionID,
+			Column: resolution.FieldResolution,
 		})
-		r.ResolutionID = value
+		r.Resolution = value
 	}
 	if nodes := rc.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

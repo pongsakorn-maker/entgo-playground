@@ -21,9 +21,9 @@ type VideoCreate struct {
 	hooks    []Hook
 }
 
-// SetVideoID sets the video_id field.
-func (vc *VideoCreate) SetVideoID(i int) *VideoCreate {
-	vc.mutation.SetVideoID(i)
+// SetVideoTitle sets the video_title field.
+func (vc *VideoCreate) SetVideoTitle(s string) *VideoCreate {
+	vc.mutation.SetVideoTitle(s)
 	return vc
 }
 
@@ -108,8 +108,13 @@ func (vc *VideoCreate) SaveX(ctx context.Context) *Video {
 }
 
 func (vc *VideoCreate) preSave() error {
-	if _, ok := vc.mutation.VideoID(); !ok {
-		return &ValidationError{Name: "video_id", err: errors.New("ent: missing required field \"video_id\"")}
+	if _, ok := vc.mutation.VideoTitle(); !ok {
+		return &ValidationError{Name: "video_title", err: errors.New("ent: missing required field \"video_title\"")}
+	}
+	if v, ok := vc.mutation.VideoTitle(); ok {
+		if err := video.VideoTitleValidator(v); err != nil {
+			return &ValidationError{Name: "video_title", err: fmt.Errorf("ent: validator failed for field \"video_title\": %w", err)}
+		}
 	}
 	return nil
 }
@@ -138,13 +143,13 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if value, ok := vc.mutation.VideoID(); ok {
+	if value, ok := vc.mutation.VideoTitle(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: video.FieldVideoID,
+			Column: video.FieldVideoTitle,
 		})
-		v.VideoID = value
+		v.VideoTitle = value
 	}
 	if nodes := vc.mutation.PlaylistVideosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

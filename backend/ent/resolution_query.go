@@ -270,12 +270,12 @@ func (rq *ResolutionQuery) WithPlaylistVideos(opts ...func(*PlaylistVideoQuery))
 // Example:
 //
 //	var v []struct {
-//		ResolutionID int `json:"resolution_id,omitempty"`
+//		Resolution string `json:"resolution,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Resolution.Query().
-//		GroupBy(resolution.FieldResolutionID).
+//		GroupBy(resolution.FieldResolution).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -296,11 +296,11 @@ func (rq *ResolutionQuery) GroupBy(field string, fields ...string) *ResolutionGr
 // Example:
 //
 //	var v []struct {
-//		ResolutionID int `json:"resolution_id,omitempty"`
+//		Resolution string `json:"resolution,omitempty"`
 //	}
 //
 //	client.Resolution.Query().
-//		Select(resolution.FieldResolutionID).
+//		Select(resolution.FieldResolution).
 //		Scan(ctx, &v)
 //
 func (rq *ResolutionQuery) Select(field string, fields ...string) *ResolutionSelect {

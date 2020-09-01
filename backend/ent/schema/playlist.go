@@ -3,7 +3,6 @@ package schema
 import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
-	"github.com/facebook/ent/schema/field"
 )
 
 // Playlist holds the schema definition for the Playlist entity.
@@ -13,9 +12,7 @@ type Playlist struct {
 
 // Fields of the Playlist.
 func (Playlist) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int("playlist_id"),
-	}
+	return []ent.Field{}
 }
 
 // Edges of the Playlist.

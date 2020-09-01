@@ -28,16 +28,9 @@ func (ru *ResolutionUpdate) Where(ps ...predicate.Resolution) *ResolutionUpdate 
 	return ru
 }
 
-// SetResolutionID sets the resolution_id field.
-func (ru *ResolutionUpdate) SetResolutionID(i int) *ResolutionUpdate {
-	ru.mutation.ResetResolutionID()
-	ru.mutation.SetResolutionID(i)
-	return ru
-}
-
-// AddResolutionID adds i to resolution_id.
-func (ru *ResolutionUpdate) AddResolutionID(i int) *ResolutionUpdate {
-	ru.mutation.AddResolutionID(i)
+// SetResolution sets the resolution field.
+func (ru *ResolutionUpdate) SetResolution(s string) *ResolutionUpdate {
+	ru.mutation.SetResolution(s)
 	return ru
 }
 
@@ -78,6 +71,11 @@ func (ru *ResolutionUpdate) RemovePlaylistVideos(p ...*PlaylistVideo) *Resolutio
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ru *ResolutionUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := ru.mutation.Resolution(); ok {
+		if err := resolution.ResolutionValidator(v); err != nil {
+			return 0, &ValidationError{Name: "resolution", err: fmt.Errorf("ent: validator failed for field \"resolution\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -146,18 +144,11 @@ func (ru *ResolutionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ru.mutation.ResolutionID(); ok {
+	if value, ok := ru.mutation.Resolution(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: resolution.FieldResolutionID,
-		})
-	}
-	if value, ok := ru.mutation.AddedResolutionID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: resolution.FieldResolutionID,
+			Column: resolution.FieldResolution,
 		})
 	}
 	if nodes := ru.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
@@ -216,16 +207,9 @@ type ResolutionUpdateOne struct {
 	mutation *ResolutionMutation
 }
 
-// SetResolutionID sets the resolution_id field.
-func (ruo *ResolutionUpdateOne) SetResolutionID(i int) *ResolutionUpdateOne {
-	ruo.mutation.ResetResolutionID()
-	ruo.mutation.SetResolutionID(i)
-	return ruo
-}
-
-// AddResolutionID adds i to resolution_id.
-func (ruo *ResolutionUpdateOne) AddResolutionID(i int) *ResolutionUpdateOne {
-	ruo.mutation.AddResolutionID(i)
+// SetResolution sets the resolution field.
+func (ruo *ResolutionUpdateOne) SetResolution(s string) *ResolutionUpdateOne {
+	ruo.mutation.SetResolution(s)
 	return ruo
 }
 
@@ -266,6 +250,11 @@ func (ruo *ResolutionUpdateOne) RemovePlaylistVideos(p ...*PlaylistVideo) *Resol
 
 // Save executes the query and returns the updated entity.
 func (ruo *ResolutionUpdateOne) Save(ctx context.Context) (*Resolution, error) {
+	if v, ok := ruo.mutation.Resolution(); ok {
+		if err := resolution.ResolutionValidator(v); err != nil {
+			return nil, &ValidationError{Name: "resolution", err: fmt.Errorf("ent: validator failed for field \"resolution\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -332,18 +321,11 @@ func (ruo *ResolutionUpdateOne) sqlSave(ctx context.Context) (r *Resolution, err
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Resolution.ID for update")}
 	}
 	_spec.Node.ID.Value = id
-	if value, ok := ruo.mutation.ResolutionID(); ok {
+	if value, ok := ruo.mutation.Resolution(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: resolution.FieldResolutionID,
-		})
-	}
-	if value, ok := ruo.mutation.AddedResolutionID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: resolution.FieldResolutionID,
+			Column: resolution.FieldResolution,
 		})
 	}
 	if nodes := ruo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {

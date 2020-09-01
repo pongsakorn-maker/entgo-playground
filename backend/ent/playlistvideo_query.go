@@ -328,19 +328,6 @@ func (pvq *PlaylistVideoQuery) WithResolution(opts ...func(*ResolutionQuery)) *P
 
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
-//
-// Example:
-//
-//	var v []struct {
-//		PlaylistVideoID int `json:"playlistVideo_id,omitempty"`
-//		Count int `json:"count,omitempty"`
-//	}
-//
-//	client.PlaylistVideo.Query().
-//		GroupBy(playlistvideo.FieldPlaylistVideoID).
-//		Aggregate(ent.Count()).
-//		Scan(ctx, &v)
-//
 func (pvq *PlaylistVideoQuery) GroupBy(field string, fields ...string) *PlaylistVideoGroupBy {
 	group := &PlaylistVideoGroupBy{config: pvq.config}
 	group.fields = append([]string{field}, fields...)
@@ -354,17 +341,6 @@ func (pvq *PlaylistVideoQuery) GroupBy(field string, fields ...string) *Playlist
 }
 
 // Select one or more fields from the given query.
-//
-// Example:
-//
-//	var v []struct {
-//		PlaylistVideoID int `json:"playlistVideo_id,omitempty"`
-//	}
-//
-//	client.PlaylistVideo.Query().
-//		Select(playlistvideo.FieldPlaylistVideoID).
-//		Scan(ctx, &v)
-//
 func (pvq *PlaylistVideoQuery) Select(field string, fields ...string) *PlaylistVideoSelect {
 	selector := &PlaylistVideoSelect{config: pvq.config}
 	selector.fields = append([]string{field}, fields...)

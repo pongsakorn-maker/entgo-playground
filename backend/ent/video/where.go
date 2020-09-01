@@ -91,29 +91,29 @@ func IDLTE(id int) predicate.Video {
 	})
 }
 
-// VideoID applies equality check predicate on the "video_id" field. It's identical to VideoIDEQ.
-func VideoID(v int) predicate.Video {
+// VideoTitle applies equality check predicate on the "video_title" field. It's identical to VideoTitleEQ.
+func VideoTitle(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldVideoID), v))
+		s.Where(sql.EQ(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDEQ applies the EQ predicate on the "video_id" field.
-func VideoIDEQ(v int) predicate.Video {
+// VideoTitleEQ applies the EQ predicate on the "video_title" field.
+func VideoTitleEQ(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldVideoID), v))
+		s.Where(sql.EQ(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDNEQ applies the NEQ predicate on the "video_id" field.
-func VideoIDNEQ(v int) predicate.Video {
+// VideoTitleNEQ applies the NEQ predicate on the "video_title" field.
+func VideoTitleNEQ(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldVideoID), v))
+		s.Where(sql.NEQ(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDIn applies the In predicate on the "video_id" field.
-func VideoIDIn(vs ...int) predicate.Video {
+// VideoTitleIn applies the In predicate on the "video_title" field.
+func VideoTitleIn(vs ...string) predicate.Video {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -125,12 +125,12 @@ func VideoIDIn(vs ...int) predicate.Video {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldVideoID), v...))
+		s.Where(sql.In(s.C(FieldVideoTitle), v...))
 	})
 }
 
-// VideoIDNotIn applies the NotIn predicate on the "video_id" field.
-func VideoIDNotIn(vs ...int) predicate.Video {
+// VideoTitleNotIn applies the NotIn predicate on the "video_title" field.
+func VideoTitleNotIn(vs ...string) predicate.Video {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -142,35 +142,70 @@ func VideoIDNotIn(vs ...int) predicate.Video {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldVideoID), v...))
+		s.Where(sql.NotIn(s.C(FieldVideoTitle), v...))
 	})
 }
 
-// VideoIDGT applies the GT predicate on the "video_id" field.
-func VideoIDGT(v int) predicate.Video {
+// VideoTitleGT applies the GT predicate on the "video_title" field.
+func VideoTitleGT(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldVideoID), v))
+		s.Where(sql.GT(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDGTE applies the GTE predicate on the "video_id" field.
-func VideoIDGTE(v int) predicate.Video {
+// VideoTitleGTE applies the GTE predicate on the "video_title" field.
+func VideoTitleGTE(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldVideoID), v))
+		s.Where(sql.GTE(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDLT applies the LT predicate on the "video_id" field.
-func VideoIDLT(v int) predicate.Video {
+// VideoTitleLT applies the LT predicate on the "video_title" field.
+func VideoTitleLT(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldVideoID), v))
+		s.Where(sql.LT(s.C(FieldVideoTitle), v))
 	})
 }
 
-// VideoIDLTE applies the LTE predicate on the "video_id" field.
-func VideoIDLTE(v int) predicate.Video {
+// VideoTitleLTE applies the LTE predicate on the "video_title" field.
+func VideoTitleLTE(v string) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldVideoID), v))
+		s.Where(sql.LTE(s.C(FieldVideoTitle), v))
+	})
+}
+
+// VideoTitleContains applies the Contains predicate on the "video_title" field.
+func VideoTitleContains(v string) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldVideoTitle), v))
+	})
+}
+
+// VideoTitleHasPrefix applies the HasPrefix predicate on the "video_title" field.
+func VideoTitleHasPrefix(v string) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldVideoTitle), v))
+	})
+}
+
+// VideoTitleHasSuffix applies the HasSuffix predicate on the "video_title" field.
+func VideoTitleHasSuffix(v string) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldVideoTitle), v))
+	})
+}
+
+// VideoTitleEqualFold applies the EqualFold predicate on the "video_title" field.
+func VideoTitleEqualFold(v string) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldVideoTitle), v))
+	})
+}
+
+// VideoTitleContainsFold applies the ContainsFold predicate on the "video_title" field.
+func VideoTitleContainsFold(v string) predicate.Video {
+	return predicate.Video(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldVideoTitle), v))
 	})
 }
 

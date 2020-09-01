@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
@@ -20,12 +19,6 @@ type PlaylistVideoCreate struct {
 	config
 	mutation *PlaylistVideoMutation
 	hooks    []Hook
-}
-
-// SetPlaylistVideoID sets the playlistVideo_id field.
-func (pvc *PlaylistVideoCreate) SetPlaylistVideoID(i int) *PlaylistVideoCreate {
-	pvc.mutation.SetPlaylistVideoID(i)
-	return pvc
 }
 
 // SetVideoID sets the video edge to Video by id.
@@ -132,9 +125,6 @@ func (pvc *PlaylistVideoCreate) SaveX(ctx context.Context) *PlaylistVideo {
 }
 
 func (pvc *PlaylistVideoCreate) preSave() error {
-	if _, ok := pvc.mutation.PlaylistVideoID(); !ok {
-		return &ValidationError{Name: "playlistVideo_id", err: errors.New("ent: missing required field \"playlistVideo_id\"")}
-	}
 	return nil
 }
 
@@ -162,14 +152,6 @@ func (pvc *PlaylistVideoCreate) createSpec() (*PlaylistVideo, *sqlgraph.CreateSp
 			},
 		}
 	)
-	if value, ok := pvc.mutation.PlaylistVideoID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlistvideo.FieldPlaylistVideoID,
-		})
-		pv.PlaylistVideoID = value
-	}
 	if nodes := pvc.mutation.VideoIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,

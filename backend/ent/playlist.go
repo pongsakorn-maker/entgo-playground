@@ -13,11 +13,9 @@ import (
 
 // Playlist is the model entity for the Playlist schema.
 type Playlist struct {
-	config `json:"-"`
+	config
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// PlaylistID holds the value of the "playlist_id" field.
-	PlaylistID int `json:"playlist_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlaylistQuery when eager-loading is set.
 	Edges   PlaylistEdges `json:"edges"`
@@ -62,7 +60,6 @@ func (e PlaylistEdges) OwnerOrErr() (*User, error) {
 func (*Playlist) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // id
-		&sql.NullInt64{}, // playlist_id
 	}
 }
 
@@ -84,12 +81,6 @@ func (pl *Playlist) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field id", value)
 	}
 	pl.ID = int(value.Int64)
-	values = values[1:]
-	if value, ok := values[0].(*sql.NullInt64); !ok {
-		return fmt.Errorf("unexpected type %T for field playlist_id", values[0])
-	} else if value.Valid {
-		pl.PlaylistID = int(value.Int64)
-	}
 	values = values[1:]
 	if len(values) == len(playlist.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
@@ -135,8 +126,6 @@ func (pl *Playlist) String() string {
 	var builder strings.Builder
 	builder.WriteString("Playlist(")
 	builder.WriteString(fmt.Sprintf("id=%v", pl.ID))
-	builder.WriteString(", playlist_id=")
-	builder.WriteString(fmt.Sprintf("%v", pl.PlaylistID))
 	builder.WriteByte(')')
 	return builder.String()
 }

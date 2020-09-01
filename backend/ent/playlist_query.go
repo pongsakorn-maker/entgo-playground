@@ -298,19 +298,6 @@ func (pq *PlaylistQuery) WithOwner(opts ...func(*UserQuery)) *PlaylistQuery {
 
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
-//
-// Example:
-//
-//	var v []struct {
-//		PlaylistID int `json:"playlist_id,omitempty"`
-//		Count int `json:"count,omitempty"`
-//	}
-//
-//	client.Playlist.Query().
-//		GroupBy(playlist.FieldPlaylistID).
-//		Aggregate(ent.Count()).
-//		Scan(ctx, &v)
-//
 func (pq *PlaylistQuery) GroupBy(field string, fields ...string) *PlaylistGroupBy {
 	group := &PlaylistGroupBy{config: pq.config}
 	group.fields = append([]string{field}, fields...)
@@ -324,17 +311,6 @@ func (pq *PlaylistQuery) GroupBy(field string, fields ...string) *PlaylistGroupB
 }
 
 // Select one or more fields from the given query.
-//
-// Example:
-//
-//	var v []struct {
-//		PlaylistID int `json:"playlist_id,omitempty"`
-//	}
-//
-//	client.Playlist.Query().
-//		Select(playlist.FieldPlaylistID).
-//		Scan(ctx, &v)
-//
 func (pq *PlaylistQuery) Select(field string, fields ...string) *PlaylistSelect {
 	selector := &PlaylistSelect{config: pq.config}
 	selector.fields = append([]string{field}, fields...)

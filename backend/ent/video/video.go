@@ -7,8 +7,8 @@ const (
 	Label = "video"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldVideoID holds the string denoting the video_id field in the database.
-	FieldVideoID = "video_id"
+	// FieldVideoTitle holds the string denoting the video_title field in the database.
+	FieldVideoTitle = "video_title"
 
 	// EdgePlaylistVideos holds the string denoting the playlist_videos edge name in mutations.
 	EdgePlaylistVideos = "playlist_videos"
@@ -36,10 +36,15 @@ const (
 // Columns holds all SQL columns for video fields.
 var Columns = []string{
 	FieldID,
-	FieldVideoID,
+	FieldVideoTitle,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Video type.
 var ForeignKeys = []string{
 	"user_id",
 }
+
+var (
+	// VideoTitleValidator is a validator for the "video_title" field. It is called by the builders before save.
+	VideoTitleValidator func(string) error
+)

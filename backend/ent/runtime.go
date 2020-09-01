@@ -2,8 +2,37 @@
 
 package ent
 
+import (
+	"github.com/pongsakorn-maker/entgo-playground/ent/resolution"
+	"github.com/pongsakorn-maker/entgo-playground/ent/schema"
+	"github.com/pongsakorn-maker/entgo-playground/ent/user"
+	"github.com/pongsakorn-maker/entgo-playground/ent/video"
+)
+
 // The init function reads all schema descriptors with runtime
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
+	resolutionFields := schema.Resolution{}.Fields()
+	_ = resolutionFields
+	// resolutionDescResolution is the schema descriptor for resolution field.
+	resolutionDescResolution := resolutionFields[0].Descriptor()
+	// resolution.ResolutionValidator is a validator for the "resolution" field. It is called by the builders before save.
+	resolution.ResolutionValidator = resolutionDescResolution.Validators[0].(func(string) error)
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescAge is the schema descriptor for age field.
+	userDescAge := userFields[2].Descriptor()
+	// user.AgeValidator is a validator for the "age" field. It is called by the builders before save.
+	user.AgeValidator = userDescAge.Validators[0].(func(int) error)
+	// userDescName is the schema descriptor for name field.
+	userDescName := userFields[3].Descriptor()
+	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	user.NameValidator = userDescName.Validators[0].(func(string) error)
+	videoFields := schema.Video{}.Fields()
+	_ = videoFields
+	// videoDescVideoTitle is the schema descriptor for video_title field.
+	videoDescVideoTitle := videoFields[0].Descriptor()
+	// video.VideoTitleValidator is a validator for the "video_title" field. It is called by the builders before save.
+	video.VideoTitleValidator = videoDescVideoTitle.Validators[0].(func(string) error)
 }

@@ -7,8 +7,8 @@ const (
 	Label = "resolution"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldResolutionID holds the string denoting the resolution_id field in the database.
-	FieldResolutionID = "resolution_id"
+	// FieldResolution holds the string denoting the resolution field in the database.
+	FieldResolution = "resolution"
 
 	// EdgePlaylistVideos holds the string denoting the playlist_videos edge name in mutations.
 	EdgePlaylistVideos = "playlist_videos"
@@ -27,5 +27,10 @@ const (
 // Columns holds all SQL columns for resolution fields.
 var Columns = []string{
 	FieldID,
-	FieldResolutionID,
+	FieldResolution,
 }
+
+var (
+	// ResolutionValidator is a validator for the "resolution" field. It is called by the builders before save.
+	ResolutionValidator func(string) error
+)

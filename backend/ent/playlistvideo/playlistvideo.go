@@ -7,8 +7,6 @@ const (
 	Label = "playlist_video"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldPlaylistVideoID holds the string denoting the playlistvideo_id field in the database.
-	FieldPlaylistVideoID = "playlist_video_id"
 
 	// EdgeVideo holds the string denoting the video edge name in mutations.
 	EdgeVideo = "video"
@@ -45,7 +43,6 @@ const (
 // Columns holds all SQL columns for playlistvideo fields.
 var Columns = []string{
 	FieldID,
-	FieldPlaylistVideoID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the PlaylistVideo type.

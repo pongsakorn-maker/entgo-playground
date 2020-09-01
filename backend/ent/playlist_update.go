@@ -29,19 +29,6 @@ func (pu *PlaylistUpdate) Where(ps ...predicate.Playlist) *PlaylistUpdate {
 	return pu
 }
 
-// SetPlaylistID sets the playlist_id field.
-func (pu *PlaylistUpdate) SetPlaylistID(i int) *PlaylistUpdate {
-	pu.mutation.ResetPlaylistID()
-	pu.mutation.SetPlaylistID(i)
-	return pu
-}
-
-// AddPlaylistID adds i to playlist_id.
-func (pu *PlaylistUpdate) AddPlaylistID(i int) *PlaylistUpdate {
-	pu.mutation.AddPlaylistID(i)
-	return pu
-}
-
 // AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
 func (pu *PlaylistUpdate) AddPlaylistVideoIDs(ids ...int) *PlaylistUpdate {
 	pu.mutation.AddPlaylistVideoIDs(ids...)
@@ -172,20 +159,6 @@ func (pu *PlaylistUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := pu.mutation.PlaylistID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlist.FieldPlaylistID,
-		})
-	}
-	if value, ok := pu.mutation.AddedPlaylistID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlist.FieldPlaylistID,
-		})
-	}
 	if nodes := pu.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -275,19 +248,6 @@ type PlaylistUpdateOne struct {
 	config
 	hooks    []Hook
 	mutation *PlaylistMutation
-}
-
-// SetPlaylistID sets the playlist_id field.
-func (puo *PlaylistUpdateOne) SetPlaylistID(i int) *PlaylistUpdateOne {
-	puo.mutation.ResetPlaylistID()
-	puo.mutation.SetPlaylistID(i)
-	return puo
-}
-
-// AddPlaylistID adds i to playlist_id.
-func (puo *PlaylistUpdateOne) AddPlaylistID(i int) *PlaylistUpdateOne {
-	puo.mutation.AddPlaylistID(i)
-	return puo
 }
 
 // AddPlaylistVideoIDs adds the playlist_videos edge to PlaylistVideo by ids.
@@ -418,20 +378,6 @@ func (puo *PlaylistUpdateOne) sqlSave(ctx context.Context) (pl *Playlist, err er
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Playlist.ID for update")}
 	}
 	_spec.Node.ID.Value = id
-	if value, ok := puo.mutation.PlaylistID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlist.FieldPlaylistID,
-		})
-	}
-	if value, ok := puo.mutation.AddedPlaylistID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlist.FieldPlaylistID,
-		})
-	}
 	if nodes := puo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,

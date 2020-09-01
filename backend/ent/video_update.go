@@ -29,16 +29,9 @@ func (vu *VideoUpdate) Where(ps ...predicate.Video) *VideoUpdate {
 	return vu
 }
 
-// SetVideoID sets the video_id field.
-func (vu *VideoUpdate) SetVideoID(i int) *VideoUpdate {
-	vu.mutation.ResetVideoID()
-	vu.mutation.SetVideoID(i)
-	return vu
-}
-
-// AddVideoID adds i to video_id.
-func (vu *VideoUpdate) AddVideoID(i int) *VideoUpdate {
-	vu.mutation.AddVideoID(i)
+// SetVideoTitle sets the video_title field.
+func (vu *VideoUpdate) SetVideoTitle(s string) *VideoUpdate {
+	vu.mutation.SetVideoTitle(s)
 	return vu
 }
 
@@ -104,6 +97,11 @@ func (vu *VideoUpdate) ClearOwner() *VideoUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (vu *VideoUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := vu.mutation.VideoTitle(); ok {
+		if err := video.VideoTitleValidator(v); err != nil {
+			return 0, &ValidationError{Name: "video_title", err: fmt.Errorf("ent: validator failed for field \"video_title\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -172,18 +170,11 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := vu.mutation.VideoID(); ok {
+	if value, ok := vu.mutation.VideoTitle(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: video.FieldVideoID,
-		})
-	}
-	if value, ok := vu.mutation.AddedVideoID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: video.FieldVideoID,
+			Column: video.FieldVideoTitle,
 		})
 	}
 	if nodes := vu.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {
@@ -277,16 +268,9 @@ type VideoUpdateOne struct {
 	mutation *VideoMutation
 }
 
-// SetVideoID sets the video_id field.
-func (vuo *VideoUpdateOne) SetVideoID(i int) *VideoUpdateOne {
-	vuo.mutation.ResetVideoID()
-	vuo.mutation.SetVideoID(i)
-	return vuo
-}
-
-// AddVideoID adds i to video_id.
-func (vuo *VideoUpdateOne) AddVideoID(i int) *VideoUpdateOne {
-	vuo.mutation.AddVideoID(i)
+// SetVideoTitle sets the video_title field.
+func (vuo *VideoUpdateOne) SetVideoTitle(s string) *VideoUpdateOne {
+	vuo.mutation.SetVideoTitle(s)
 	return vuo
 }
 
@@ -352,6 +336,11 @@ func (vuo *VideoUpdateOne) ClearOwner() *VideoUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (vuo *VideoUpdateOne) Save(ctx context.Context) (*Video, error) {
+	if v, ok := vuo.mutation.VideoTitle(); ok {
+		if err := video.VideoTitleValidator(v); err != nil {
+			return nil, &ValidationError{Name: "video_title", err: fmt.Errorf("ent: validator failed for field \"video_title\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -418,18 +407,11 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (v *Video, err error) {
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Video.ID for update")}
 	}
 	_spec.Node.ID.Value = id
-	if value, ok := vuo.mutation.VideoID(); ok {
+	if value, ok := vuo.mutation.VideoTitle(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: video.FieldVideoID,
-		})
-	}
-	if value, ok := vuo.mutation.AddedVideoID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: video.FieldVideoID,
+			Column: video.FieldVideoTitle,
 		})
 	}
 	if nodes := vuo.mutation.RemovedPlaylistVideosIDs(); len(nodes) > 0 {

@@ -30,19 +30,6 @@ func (pvu *PlaylistVideoUpdate) Where(ps ...predicate.PlaylistVideo) *PlaylistVi
 	return pvu
 }
 
-// SetPlaylistVideoID sets the playlistVideo_id field.
-func (pvu *PlaylistVideoUpdate) SetPlaylistVideoID(i int) *PlaylistVideoUpdate {
-	pvu.mutation.ResetPlaylistVideoID()
-	pvu.mutation.SetPlaylistVideoID(i)
-	return pvu
-}
-
-// AddPlaylistVideoID adds i to playlistVideo_id.
-func (pvu *PlaylistVideoUpdate) AddPlaylistVideoID(i int) *PlaylistVideoUpdate {
-	pvu.mutation.AddPlaylistVideoID(i)
-	return pvu
-}
-
 // SetVideoID sets the video edge to Video by id.
 func (pvu *PlaylistVideoUpdate) SetVideoID(id int) *PlaylistVideoUpdate {
 	pvu.mutation.SetVideoID(id)
@@ -193,20 +180,6 @@ func (pvu *PlaylistVideoUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
-	if value, ok := pvu.mutation.PlaylistVideoID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlistvideo.FieldPlaylistVideoID,
-		})
-	}
-	if value, ok := pvu.mutation.AddedPlaylistVideoID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlistvideo.FieldPlaylistVideoID,
-		})
-	}
 	if pvu.mutation.VideoCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -328,19 +301,6 @@ type PlaylistVideoUpdateOne struct {
 	config
 	hooks    []Hook
 	mutation *PlaylistVideoMutation
-}
-
-// SetPlaylistVideoID sets the playlistVideo_id field.
-func (pvuo *PlaylistVideoUpdateOne) SetPlaylistVideoID(i int) *PlaylistVideoUpdateOne {
-	pvuo.mutation.ResetPlaylistVideoID()
-	pvuo.mutation.SetPlaylistVideoID(i)
-	return pvuo
-}
-
-// AddPlaylistVideoID adds i to playlistVideo_id.
-func (pvuo *PlaylistVideoUpdateOne) AddPlaylistVideoID(i int) *PlaylistVideoUpdateOne {
-	pvuo.mutation.AddPlaylistVideoID(i)
-	return pvuo
 }
 
 // SetVideoID sets the video edge to Video by id.
@@ -491,20 +451,6 @@ func (pvuo *PlaylistVideoUpdateOne) sqlSave(ctx context.Context) (pv *PlaylistVi
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing PlaylistVideo.ID for update")}
 	}
 	_spec.Node.ID.Value = id
-	if value, ok := pvuo.mutation.PlaylistVideoID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlistvideo.FieldPlaylistVideoID,
-		})
-	}
-	if value, ok := pvuo.mutation.AddedPlaylistVideoID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Value:  value,
-			Column: playlistvideo.FieldPlaylistVideoID,
-		})
-	}
 	if pvuo.mutation.VideoCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,

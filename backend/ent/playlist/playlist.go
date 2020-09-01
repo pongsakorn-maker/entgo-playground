@@ -7,8 +7,6 @@ const (
 	Label = "playlist"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldPlaylistID holds the string denoting the playlist_id field in the database.
-	FieldPlaylistID = "playlist_id"
 
 	// EdgePlaylistVideos holds the string denoting the playlist_videos edge name in mutations.
 	EdgePlaylistVideos = "playlist_videos"
@@ -36,7 +34,6 @@ const (
 // Columns holds all SQL columns for playlist fields.
 var Columns = []string{
 	FieldID,
-	FieldPlaylistID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Playlist type.
