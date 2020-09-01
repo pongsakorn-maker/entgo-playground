@@ -21,7 +21,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "playlistvideo" package.
 	PlaylistVideosInverseTable = "playlist_videos"
 	// PlaylistVideosColumn is the table column denoting the playlist_videos relation/edge.
-	PlaylistVideosColumn = "resolution_playlist_videos"
+	PlaylistVideosColumn = "Resolution_ID"
 )
 
 // Columns holds all SQL columns for resolution fields.

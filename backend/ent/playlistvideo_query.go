@@ -433,7 +433,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PlaylistVideo)
 		for i := range nodes {
-			if fk := nodes[i].video_playlist_videos; fk != nil {
+			if fk := nodes[i].Video_ID; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -446,7 +446,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "video_playlist_videos" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "Video_ID" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Video = n
@@ -458,7 +458,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PlaylistVideo)
 		for i := range nodes {
-			if fk := nodes[i].playlist_playlist_videos; fk != nil {
+			if fk := nodes[i].Playlist_ID; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -471,7 +471,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "playlist_playlist_videos" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "Playlist_ID" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Playlists = n
@@ -483,7 +483,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*PlaylistVideo)
 		for i := range nodes {
-			if fk := nodes[i].resolution_playlist_videos; fk != nil {
+			if fk := nodes[i].Resolution_ID; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -496,7 +496,7 @@ func (pvq *PlaylistVideoQuery) sqlAll(ctx context.Context) ([]*PlaylistVideo, er
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "resolution_playlist_videos" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "Resolution_ID" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Resolution = n

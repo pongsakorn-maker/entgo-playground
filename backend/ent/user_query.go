@@ -403,13 +403,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.user_playlists
+			fk := n.User_ID
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_playlists" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "User_ID" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_playlists" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "User_ID" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Playlists = append(node.Edges.Playlists, n)
 		}
@@ -431,13 +431,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.user_videos
+			fk := n.User_ID
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_videos" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "User_ID" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_videos" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "User_ID" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Videos = append(node.Edges.Videos, n)
 		}

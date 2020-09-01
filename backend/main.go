@@ -7,7 +7,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	_ "github.com/pongsakorn-maker/entgo-playground/docs"
 	"github.com/pongsakorn-maker/entgo-playground/ent"
 )
 
@@ -55,7 +54,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	client, err := ent.Open("sqlite3", "file:ent.db?cache=shared&_fk=1")
+	client, err := ent.Open("sqlite3", "file:ent.db?&cache=shared&_fk=1")
 	if err != nil {
 		log.Fatalf("fail to open sqlite3: %v", err)
 	}

@@ -22,10 +22,10 @@ type PlaylistVideo struct {
 	PlaylistVideoID int `json:"PlaylistVideo_ID,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlaylistVideoQuery when eager-loading is set.
-	Edges                      PlaylistVideoEdges `json:"edges"`
-	playlist_playlist_videos   *int
-	resolution_playlist_videos *int
-	video_playlist_videos      *int
+	Edges         PlaylistVideoEdges `json:"edges"`
+	Playlist_ID   *int
+	Resolution_ID *int
+	Video_ID      *int
 }
 
 // PlaylistVideoEdges holds the relations/edges for other nodes in the graph.
@@ -94,9 +94,9 @@ func (*PlaylistVideo) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*PlaylistVideo) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // playlist_playlist_videos
-		&sql.NullInt64{}, // resolution_playlist_videos
-		&sql.NullInt64{}, // video_playlist_videos
+		&sql.NullInt64{}, // Playlist_ID
+		&sql.NullInt64{}, // Resolution_ID
+		&sql.NullInt64{}, // Video_ID
 	}
 }
 
@@ -120,22 +120,22 @@ func (pv *PlaylistVideo) assignValues(values ...interface{}) error {
 	values = values[1:]
 	if len(values) == len(playlistvideo.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field playlist_playlist_videos", value)
+			return fmt.Errorf("unexpected type %T for edge-field Playlist_ID", value)
 		} else if value.Valid {
-			pv.playlist_playlist_videos = new(int)
-			*pv.playlist_playlist_videos = int(value.Int64)
+			pv.Playlist_ID = new(int)
+			*pv.Playlist_ID = int(value.Int64)
 		}
 		if value, ok := values[1].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field resolution_playlist_videos", value)
+			return fmt.Errorf("unexpected type %T for edge-field Resolution_ID", value)
 		} else if value.Valid {
-			pv.resolution_playlist_videos = new(int)
-			*pv.resolution_playlist_videos = int(value.Int64)
+			pv.Resolution_ID = new(int)
+			*pv.Resolution_ID = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field video_playlist_videos", value)
+			return fmt.Errorf("unexpected type %T for edge-field Video_ID", value)
 		} else if value.Valid {
-			pv.video_playlist_videos = new(int)
-			*pv.video_playlist_videos = int(value.Int64)
+			pv.Video_ID = new(int)
+			*pv.Video_ID = int(value.Int64)
 		}
 	}
 	return nil

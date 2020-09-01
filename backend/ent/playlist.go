@@ -20,8 +20,8 @@ type Playlist struct {
 	PlaylistID int `json:"Playlist_ID,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PlaylistQuery when eager-loading is set.
-	Edges          PlaylistEdges `json:"edges"`
-	user_playlists *int
+	Edges   PlaylistEdges `json:"edges"`
+	User_ID *int
 }
 
 // PlaylistEdges holds the relations/edges for other nodes in the graph.
@@ -69,7 +69,7 @@ func (*Playlist) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Playlist) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // user_playlists
+		&sql.NullInt64{}, // User_ID
 	}
 }
 
@@ -93,10 +93,10 @@ func (pl *Playlist) assignValues(values ...interface{}) error {
 	values = values[1:]
 	if len(values) == len(playlist.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field user_playlists", value)
+			return fmt.Errorf("unexpected type %T for edge-field User_ID", value)
 		} else if value.Valid {
-			pl.user_playlists = new(int)
-			*pl.user_playlists = int(value.Int64)
+			pl.User_ID = new(int)
+			*pl.User_ID = int(value.Int64)
 		}
 	}
 	return nil

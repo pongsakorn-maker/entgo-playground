@@ -23,14 +23,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "playlistvideo" package.
 	PlaylistVideosInverseTable = "playlist_videos"
 	// PlaylistVideosColumn is the table column denoting the playlist_videos relation/edge.
-	PlaylistVideosColumn = "video_playlist_videos"
+	PlaylistVideosColumn = "Video_ID"
 	// OwnerTable is the table the holds the owner relation/edge.
 	OwnerTable = "videos"
 	// OwnerInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	OwnerInverseTable = "users"
 	// OwnerColumn is the table column denoting the owner relation/edge.
-	OwnerColumn = "user_videos"
+	OwnerColumn = "User_ID"
 )
 
 // Columns holds all SQL columns for video fields.
@@ -41,5 +41,5 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Video type.
 var ForeignKeys = []string{
-	"user_videos",
+	"User_ID",
 }

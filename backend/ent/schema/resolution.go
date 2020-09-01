@@ -21,6 +21,6 @@ func (Resolution) Fields() []ent.Field {
 // Edges of the Resolution.
 func (Resolution) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("playlist_videos", PlaylistVideo.Type),
+		edge.To("playlist_videos", PlaylistVideo.Type).StorageKey(edge.Column("resolution_id")),
 	}
 }

@@ -20,8 +20,8 @@ type Video struct {
 	VideoID int `json:"Video_ID,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VideoQuery when eager-loading is set.
-	Edges       VideoEdges `json:"edges"`
-	user_videos *int
+	Edges   VideoEdges `json:"edges"`
+	User_ID *int
 }
 
 // VideoEdges holds the relations/edges for other nodes in the graph.
@@ -69,7 +69,7 @@ func (*Video) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Video) fkValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // user_videos
+		&sql.NullInt64{}, // User_ID
 	}
 }
 
@@ -93,10 +93,10 @@ func (v *Video) assignValues(values ...interface{}) error {
 	values = values[1:]
 	if len(values) == len(video.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
-			return fmt.Errorf("unexpected type %T for edge-field user_videos", value)
+			return fmt.Errorf("unexpected type %T for edge-field User_ID", value)
 		} else if value.Valid {
-			v.user_videos = new(int)
-			*v.user_videos = int(value.Int64)
+			v.User_ID = new(int)
+			*v.User_ID = int(value.Int64)
 		}
 	}
 	return nil

@@ -21,7 +21,7 @@ func (Video) Fields() []ent.Field {
 // Edges of the Video.
 func (Video) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("playlist_videos", PlaylistVideo.Type),
+		edge.To("playlist_videos", PlaylistVideo.Type).StorageKey(edge.Column("video_id")),
 		edge.From("owner", User.Type).Ref("videos").Unique(),
 	}
 }
