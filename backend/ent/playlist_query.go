@@ -414,13 +414,13 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.Playlist_ID
+			fk := n.playlist_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "Playlist_ID" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "playlist_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "Playlist_ID" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "playlist_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.PlaylistVideos = append(node.Edges.PlaylistVideos, n)
 		}
@@ -430,7 +430,7 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Playlist)
 		for i := range nodes {
-			if fk := nodes[i].User_ID; fk != nil {
+			if fk := nodes[i].user_id; fk != nil {
 				ids = append(ids, *fk)
 				nodeids[*fk] = append(nodeids[*fk], nodes[i])
 			}
@@ -443,7 +443,7 @@ func (pq *PlaylistQuery) sqlAll(ctx context.Context) ([]*Playlist, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "User_ID" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Owner = n

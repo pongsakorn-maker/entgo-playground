@@ -23,14 +23,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "playlist" package.
 	PlaylistsInverseTable = "playlists"
 	// PlaylistsColumn is the table column denoting the playlists relation/edge.
-	PlaylistsColumn = "User_ID"
+	PlaylistsColumn = "user_id"
 	// VideosTable is the table the holds the videos relation/edge.
 	VideosTable = "videos"
 	// VideosInverseTable is the table name for the Video entity.
 	// It exists in this package in order to avoid circular dependency with the "video" package.
 	VideosInverseTable = "videos"
 	// VideosColumn is the table column denoting the videos relation/edge.
-	VideosColumn = "User_ID"
+	VideosColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.

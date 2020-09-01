@@ -25,21 +25,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "video" package.
 	VideoInverseTable = "videos"
 	// VideoColumn is the table column denoting the video relation/edge.
-	VideoColumn = "Video_ID"
+	VideoColumn = "video_id"
 	// PlaylistsTable is the table the holds the playlists relation/edge.
 	PlaylistsTable = "playlist_videos"
 	// PlaylistsInverseTable is the table name for the Playlist entity.
 	// It exists in this package in order to avoid circular dependency with the "playlist" package.
 	PlaylistsInverseTable = "playlists"
 	// PlaylistsColumn is the table column denoting the playlists relation/edge.
-	PlaylistsColumn = "Playlist_ID"
+	PlaylistsColumn = "playlist_id"
 	// ResolutionTable is the table the holds the resolution relation/edge.
 	ResolutionTable = "playlist_videos"
 	// ResolutionInverseTable is the table name for the Resolution entity.
 	// It exists in this package in order to avoid circular dependency with the "resolution" package.
 	ResolutionInverseTable = "resolutions"
 	// ResolutionColumn is the table column denoting the resolution relation/edge.
-	ResolutionColumn = "Resolution_ID"
+	ResolutionColumn = "resolution_id"
 )
 
 // Columns holds all SQL columns for playlistvideo fields.
@@ -50,7 +50,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the PlaylistVideo type.
 var ForeignKeys = []string{
-	"Playlist_ID",
-	"Resolution_ID",
-	"Video_ID",
+	"playlist_id",
+	"resolution_id",
+	"video_id",
 }

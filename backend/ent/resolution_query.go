@@ -371,13 +371,13 @@ func (rq *ResolutionQuery) sqlAll(ctx context.Context) ([]*Resolution, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.Resolution_ID
+			fk := n.resolution_id
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "Resolution_ID" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "resolution_id" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "Resolution_ID" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "resolution_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.PlaylistVideos = append(node.Edges.PlaylistVideos, n)
 		}

@@ -12,7 +12,7 @@ var (
 	PlaylistsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "playlist_id", Type: field.TypeInt},
-		{Name: "User_ID", Type: field.TypeInt, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PlaylistsTable holds the schema information for the "playlists" table.
 	PlaylistsTable = &schema.Table{
@@ -33,9 +33,9 @@ var (
 	PlaylistVideosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "playlist_video_id", Type: field.TypeInt},
-		{Name: "Playlist_ID", Type: field.TypeInt, Nullable: true},
-		{Name: "Resolution_ID", Type: field.TypeInt, Nullable: true},
-		{Name: "Video_ID", Type: field.TypeInt, Nullable: true},
+		{Name: "playlist_id", Type: field.TypeInt, Nullable: true},
+		{Name: "resolution_id", Type: field.TypeInt, Nullable: true},
+		{Name: "video_id", Type: field.TypeInt, Nullable: true},
 	}
 	// PlaylistVideosTable holds the schema information for the "playlist_videos" table.
 	PlaylistVideosTable = &schema.Table{
@@ -94,7 +94,7 @@ var (
 	VideosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "video_id", Type: field.TypeInt},
-		{Name: "User_ID", Type: field.TypeInt, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// VideosTable holds the schema information for the "videos" table.
 	VideosTable = &schema.Table{
